@@ -127,7 +127,7 @@
 </div>
 
 <!-- Settings Modal -->
-<div id="settings-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4">
+<div id="settings-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
     <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform scale-95">
         <h2 class="text-xl font-bold mb-4">Configuración</h2>
         <div class="space-y-4">
@@ -148,14 +148,12 @@
 </div>
 
 <!-- Presets Modal -->
-<div id="presets-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4">
+<div id="presets-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
     <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl transform scale-95">
         <h2 class="text-xl font-bold mb-4">Gestionar Presets de Estilo</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto pr-2">
             <!-- Presets List -->
-            <div id="presets-list" class="space-y-3">
-                <!-- Presets will be dynamically inserted here -->
-            </div>
+            <div id="presets-list" class="space-y-3"></div>
             <!-- New Preset Form -->
             <div class="bg-gray-50 p-4 rounded-lg border">
                 <h3 class="font-bold mb-2">Añadir Nuevo Preset</h3>
@@ -173,7 +171,7 @@
 </div>
 
 <!-- Alert Modal -->
-<div id="alert-modal" class="fixed inset-0 modal-overlay z-40 hidden items-center justify-center p-4">
+<div id="alert-modal" class="fixed inset-0 modal-overlay z-40 hidden items-center justify-center p-4 opacity-0">
     <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center transform scale-95">
         <div class="text-yellow-500 text-4xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
         <h3 id="alert-title" class="text-lg font-bold">Atención</h3>
@@ -183,15 +181,11 @@
 </div>
 
 <script>
-// --- SCRIPT COMPLETO DE LA APLICACIÓN ---
 document.addEventListener('DOMContentLoaded', () => {
-    // --- State & Config ---
     let currentMode = 'single';
     let uploadedImages = { main: null };
     let collectionImages = [];
     let presets = [];
-
-    // --- UI Elements ---
     const ui = {
         brandNameHeader: document.getElementById('brand-name-header'),
         generateBtn: document.getElementById('generate-btn'),
@@ -208,16 +202,12 @@ document.addEventListener('DOMContentLoaded', () => {
         collectionPreviews: document.getElementById('collection-previews'),
         styleDropdown: document.getElementById('photo-style'),
         collectionStyleDropdown: document.getElementById('collection-photo-style'),
-
-        // Settings Modal
         settingsBtn: document.getElementById('settings-btn'),
         settingsModal: document.getElementById('settings-modal'),
         brandNameInput: document.getElementById('brand-name-input'),
         googleApiKeyInput: document.getElementById('google-api-key-input'),
         settingsSaveBtn: document.getElementById('settings-save-btn'),
         settingsCancelBtn: document.getElementById('settings-cancel-btn'),
-
-        // Presets Modal
         presetsBtn: document.getElementById('presets-btn'),
         presetsModal: document.getElementById('presets-modal'),
         presetsList: document.getElementById('presets-list'),
@@ -225,15 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
         newPresetPrompt: document.getElementById('new-preset-prompt'),
         addPresetBtn: document.getElementById('add-preset-btn'),
         presetsCloseBtn: document.getElementById('presets-close-btn'),
-        
-        // Alert Modal
         alertModal: document.getElementById('alert-modal'),
         alertTitle: document.getElementById('alert-title'),
         alertMessage: document.getElementById('alert-message'),
         alertCloseBtn: document.getElementById('alert-close-btn'),
     };
-
-    // --- Default Presets ---
     const defaultPresets = [
         { name: "Fitness / Gimnasio", prompt: "Editorial fitness photoshoot inside a modern, gritty gym with high-contrast cinematic lighting. A {model_desc} is performing a dynamic, powerful pose. Shot on a Sony A7R IV, 85mm f/1.4 lens, hyperrealistic, sharp focus, professional color grading. AVOID: 3d render, cartoon, blurry, deformed." },
         { name: "Traje de Baño / Playa", prompt: "Luxury swimwear campaign photoshoot on a pristine beach at golden hour. A {model_desc} poses elegantly near the turquoise water. Soft, warm light. Shot on a Canon EOS R5, 70-200mm f/2.8 lens, photorealistic, high detail, natural skin texture. AVOID: 3d render, cartoon, blurry, deformed." },
@@ -246,32 +232,21 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Ropa Infantil / Juguetona", prompt: "Vibrant children's clothing catalog. A {model_desc} (described as a child) is captured mid-laugh in a colorful setting. High-key lighting, cheerful. Shot on a Sony A1, 50mm f/1.8 to freeze motion. Hyperrealistic. AVOID: 3d render, cartoon, blurry, deformed." },
         { name: "Producto en Estudio", prompt: "Professional e-commerce photoshoot of the garment on an invisible mannequin (ghost mannequin effect), in a studio with perfect, even lighting against a solid light gray background (#f2f2f2). Shot on a Phase One camera, macro lens for extreme detail on the fabric. AVOID: 3d render, cartoon, blurry, deformed." },
     ];
-
-    // --- Functions ---
     const openModal = (modal) => {
-        modal.classList.remove('hidden');
+        modal.classList.remove('hidden', 'opacity-0');
         modal.classList.add('flex');
-        setTimeout(() => {
-            modal.querySelector('.modal-content').classList.remove('scale-95');
-            modal.classList.remove('opacity-0');
-        }, 10);
+        setTimeout(() => modal.querySelector('.modal-content').classList.remove('scale-95'), 10);
     };
-
     const closeModal = (modal) => {
         modal.querySelector('.modal-content').classList.add('scale-95');
         modal.classList.add('opacity-0');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }, 300);
+        setTimeout(() => modal.classList.add('hidden'), 300);
     };
-
     const showAlert = (message, title = "Atención") => {
         ui.alertTitle.textContent = title;
         ui.alertMessage.textContent = message;
         openModal(ui.alertModal);
     };
-
     const loadSettings = () => {
         const brandName = localStorage.getItem('brandName') || 'Studio Pro';
         const apiKey = localStorage.getItem('googleApiKey') || '';
@@ -279,24 +254,19 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.brandNameInput.value = brandName;
         ui.googleApiKeyInput.value = apiKey;
     };
-
     const saveSettings = () => {
         localStorage.setItem('brandName', ui.brandNameInput.value);
         localStorage.setItem('googleApiKey', ui.googleApiKeyInput.value);
         loadSettings();
         closeModal(ui.settingsModal);
     };
-
     const loadPresets = () => {
         const storedPresets = localStorage.getItem('customPresets');
         presets = storedPresets ? JSON.parse(storedPresets) : defaultPresets;
-        if (!storedPresets) {
-            localStorage.setItem('customPresets', JSON.stringify(presets));
-        }
+        if (!storedPresets) localStorage.setItem('customPresets', JSON.stringify(presets));
         populatePresetDropdowns();
         renderPresetsManager();
     };
-    
     const populatePresetDropdowns = () => {
         [ui.styleDropdown, ui.collectionStyleDropdown].forEach(dropdown => {
             dropdown.innerHTML = '';
@@ -308,23 +278,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     };
-
     const renderPresetsManager = () => {
         ui.presetsList.innerHTML = '';
         presets.forEach((preset, index) => {
             const div = document.createElement('div');
             div.className = 'p-3 border rounded-lg bg-white flex justify-between items-start';
-            div.innerHTML = `
-                <div>
-                    <p class="font-bold">${preset.name}</p>
-                    <p class="text-xs text-gray-500 mt-1 truncate">${preset.prompt}</p>
-                </div>
-                <button data-index="${index}" class="delete-preset-btn text-red-500 hover:text-red-700 ml-2 flex-shrink-0">&times;</button>
-            `;
+            div.innerHTML = `<div><p class="font-bold">${preset.name}</p><p class="text-xs text-gray-500 mt-1 truncate">${preset.prompt}</p></div><button data-index="${index}" class="delete-preset-btn text-red-500 hover:text-red-700 ml-2 flex-shrink-0">&times;</button>`;
             ui.presetsList.appendChild(div);
         });
     };
-
     const saveNewPreset = () => {
         const name = ui.newPresetName.value.trim();
         const prompt = ui.newPresetPrompt.value.trim();
@@ -336,22 +298,15 @@ document.addEventListener('DOMContentLoaded', () => {
             ui.newPresetPrompt.value = '';
         }
     };
-    
     const deletePreset = (index) => {
-        if(presets.length <= 1) {
-            showAlert("Debes tener al menos un preset.");
-            return;
-        }
+        if (presets.length <= 1) { showAlert("Debes tener al menos un preset."); return; }
         presets.splice(index, 1);
         localStorage.setItem('customPresets', JSON.stringify(presets));
         loadPresets();
     };
-
-    // --- Event Listeners ---
     ui.settingsBtn.addEventListener('click', () => openModal(ui.settingsModal));
     ui.settingsCancelBtn.addEventListener('click', () => closeModal(ui.settingsModal));
     ui.settingsSaveBtn.addEventListener('click', saveSettings);
-
     ui.presetsBtn.addEventListener('click', () => openModal(ui.presetsModal));
     ui.presetsCloseBtn.addEventListener('click', () => closeModal(ui.presetsModal));
     ui.addPresetBtn.addEventListener('click', saveNewPreset);
@@ -363,44 +318,102 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-    
     ui.alertCloseBtn.addEventListener('click', () => closeModal(ui.alertModal));
     
-    // ... (El resto del código de la aplicación, como los uploaders, el cambio de modo y la generación, va aquí. Es idéntico al de la versión anterior "dark mode" pero adaptado a la nueva estructura de UI y presets)
-
     function initializeUploader(uploaderId) {
-        // ... (código de inicialización de uploader, sin cambios)
+        const uploaderEl = document.getElementById(uploaderId);
+        const inputEl = uploaderEl.querySelector('.image-input');
+        const promptEl = uploaderEl.querySelector('.upload-prompt');
+        const previewContainerEl = uploaderEl.querySelector('.image-preview-container');
+        const previewEl = uploaderEl.querySelector('.image-preview');
+        const removeBtn = uploaderEl.querySelector('.remove-image-btn');
+        const uploaderKey = inputEl.dataset.uploader;
+        uploaderEl.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('remove-image-btn')) { inputEl.click(); }
+        });
+        inputEl.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = re => {
+                    uploadedImages[uploaderKey] = re.target.result.split(',')[1];
+                    previewEl.src = re.target.result;
+                    promptEl.classList.add('hidden');
+                    previewContainerEl.classList.remove('hidden');
+                    checkGenerateButtonState();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        removeBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            inputEl.value = '';
+            uploadedImages[uploaderKey] = null;
+            promptEl.classList.remove('hidden');
+            previewContainerEl.classList.add('hidden');
+            checkGenerateButtonState();
+        });
     }
-    ['uploader-main'].forEach(initializeUploader);
+    initializeUploader('uploader-main');
 
-    // ... (código del uploader de colección y cambio de modo, sin cambios funcionales)
+    ui.collectionUploader.addEventListener('click', () => ui.collectionInput.click());
+    ui.collectionInput.addEventListener('change', e => {
+        const files = Array.from(e.target.files);
+        if (collectionImages.length + files.length > 10) { showAlert("Puedes subir un máximo de 10 prendas."); return; }
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = re => {
+                const base64 = re.target.result.split(',')[1];
+                collectionImages.push({ name: file.name, base64 });
+                renderCollectionPreviews();
+                checkGenerateButtonState();
+            };
+            reader.readAsDataURL(file);
+        });
+        ui.collectionInput.value = '';
+    });
+    const renderCollectionPreviews = () => {
+        ui.collectionPreviews.innerHTML = '';
+        collectionImages.forEach((img, index) => {
+            const div = document.createElement('div');
+            div.className = 'relative aspect-square';
+            div.innerHTML = `<img src="data:image/png;base64,${img.base64}" class="w-full h-full object-cover rounded-md"><button data-index="${index}" class="remove-collection-item absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">&times;</button>`;
+            ui.collectionPreviews.appendChild(div);
+        });
+        ui.collectionUploader.querySelector('.upload-prompt').classList.toggle('hidden', collectionImages.length > 0);
+    };
+    ui.collectionPreviews.addEventListener('click', e => {
+        if (e.target.classList.contains('remove-collection-item')) {
+            collectionImages.splice(parseInt(e.target.dataset.index, 10), 1);
+            renderCollectionPreviews();
+            checkGenerateButtonState();
+        }
+    });
 
-    ui.modeSingleBtn.addEventListener('click', () => switchMode('single'));
-    ui.modeCollectionBtn.addEventListener('click', () => switchMode('collection'));
-    function switchMode(mode) {
+    const switchMode = (mode) => {
         currentMode = mode;
-        ui.modeSingleBtn.classList.toggle('bg-white', mode === 'single');
-        ui.modeSingleBtn.classList.toggle('text-indigo-600', mode === 'single');
-        ui.modeSingleBtn.classList.toggle('shadow', mode === 'single');
-        ui.modeSingleBtn.classList.toggle('text-gray-600', mode !== 'single');
-        ui.modeCollectionBtn.classList.toggle('bg-white', mode === 'collection');
-        ui.modeCollectionBtn.classList.toggle('text-indigo-600', mode === 'collection');
-        ui.modeCollectionBtn.classList.toggle('shadow', mode === 'collection');
-        ui.modeCollectionBtn.classList.toggle('text-gray-600', mode !== 'collection');
-        
+        const btnClasses = (isActive) => isActive ? ['bg-white', 'text-indigo-600', 'shadow'] : ['text-gray-600'];
+        ui.modeSingleBtn.classList.remove(...btnClasses(mode !== 'single'));
+        ui.modeSingleBtn.classList.add(...btnClasses(mode === 'single'));
+        ui.modeCollectionBtn.classList.remove(...btnClasses(mode !== 'collection'));
+        ui.modeCollectionBtn.classList.add(...btnClasses(mode === 'collection'));
         ui.singleProductPanel.classList.toggle('hidden', mode !== 'single');
         ui.collectionPanel.classList.toggle('hidden', mode !== 'collection');
         checkGenerateButtonState();
-    }
-    
-     // --- Main Generation Logic ---
+    };
+    ui.modeSingleBtn.addEventListener('click', () => switchMode('single'));
+    ui.modeCollectionBtn.addEventListener('click', () => switchMode('collection'));
+
+    const checkGenerateButtonState = () => {
+        ui.generateBtn.disabled = (currentMode === 'single') ? !uploadedImages.main : collectionImages.length === 0;
+    };
+
     ui.generateBtn.addEventListener('click', () => {
         const apiKey = localStorage.getItem('googleApiKey');
         if (!apiKey) {
             showAlert("Por favor, añade tu API Key de Google AI Studio en el panel de Configuración (ícono de engranaje).");
             return;
         }
-
         ui.resultsGallery.innerHTML = '';
         ui.galleryPlaceholder.classList.add('hidden');
         ui.galleryLoader.classList.remove('hidden');
@@ -408,10 +421,53 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentMode === 'single') handleSingleGeneration();
         else handleCollectionGeneration();
     });
-
-    // ... (handleSingleGeneration, handleCollectionGeneration, addImageToGallery, etc. sin cambios funcionales)
     
-     async function callNanoBananaAPI(prompt, base64ImagesArray) {
+    async function handleSingleGeneration() {
+        const prompt = constructPrompt();
+        const images = [uploadedImages.main].filter(Boolean);
+        try {
+            const generatedImage = await callNanoBananaAPI(prompt, images);
+            if (generatedImage) addImageToGallery(generatedImage);
+        } catch (error) { showAlert(error.message, "Error de Generación"); }
+        finally { setLoadingState(false, 1, 1); }
+    }
+    async function handleCollectionGeneration() {
+        const count = parseInt(document.getElementById('collection-results-count').value, 10);
+        for (let i = 0; i < count; i++) {
+            setLoadingState(true, i, count);
+            try {
+                const garmentsForShot = [...collectionImages].sort(() => 0.5 - Math.random()).slice(0, Math.min(Math.floor(Math.random() * 3) + 1, collectionImages.length));
+                const prompt = constructPrompt(garmentsForShot);
+                const images = garmentsForShot.map(g => g.base64);
+                const generatedImage = await callNanoBananaAPI(prompt, images);
+                if (generatedImage) addImageToGallery(generatedImage, i);
+            } catch (error) { showAlert(`Error en la generación ${i + 1}: ${error.message}`, "Error de Generación"); }
+        }
+        setLoadingState(false, count, count);
+    }
+    
+    function constructPrompt(collectionItems = null) {
+        if (currentMode === 'single') {
+            const presetIndex = ui.styleDropdown.value;
+            const selectedPreset = presets[presetIndex];
+            const modelDesc = document.getElementById('model-desc').value || 'professional model';
+            let finalPrompt = selectedPreset.prompt.replace('{model_desc}', modelDesc);
+            if (uploadedImages.main && !selectedPreset.prompt.includes('invisible mannequin')) {
+                finalPrompt += ' The model is wearing the main provided garment.';
+            }
+            return finalPrompt;
+        } else {
+            const presetIndex = ui.collectionStyleDropdown.value;
+            const selectedPreset = presets[presetIndex];
+            const baseDesc = document.getElementById('collection-prompt').value || 'A group of models';
+            let finalPrompt = selectedPreset.prompt.replace('{model_desc}', baseDesc);
+            const garmentNames = collectionItems.map(g => `'${g.name}'`).join(', ');
+            finalPrompt += ` The models are showcasing a collection of garments including: ${garmentsForShot.length} items from this collection. Create a cohesive campaign image.`;
+            return finalPrompt;
+        }
+    }
+    
+    async function callNanoBananaAPI(prompt, base64ImagesArray) {
         const apiKey = localStorage.getItem('googleApiKey');
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
         const parts = [{ text: prompt }];
@@ -433,41 +489,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return `data:image/png;base64,${base64Data}`;
     }
 
-    function constructPrompt(collectionItems = null) {
-        if (currentMode === 'single') {
-            const presetIndex = ui.styleDropdown.value;
-            const selectedPreset = presets[presetIndex];
-            const modelDesc = document.getElementById('model-desc').value || 'professional model';
-            let finalPrompt = selectedPreset.prompt.replace('{model_desc}', modelDesc);
-            if (uploadedImages.main && !selectedPreset.prompt.includes('invisible mannequin')) {
-                finalPrompt += ' The model is wearing the main provided garment.';
-            }
-            return finalPrompt;
-        } else {
-             const presetIndex = ui.collectionStyleDropdown.value;
-            const selectedPreset = presets[presetIndex];
-            const baseDesc = document.getElementById('collection-prompt').value || 'A group of models';
-            let finalPrompt = selectedPreset.prompt.replace('{model_desc}', baseDesc);
-            const garmentNames = collectionItems.map(g => `'${g.name}'`).join(', ');
-            finalPrompt += ` The models are showcasing a collection of garments including: ${garmentNames}. Create a cohesive campaign image.`;
-            return finalPrompt;
+    const setLoadingState = (isLoading, current, total) => {
+        ui.generateBtn.disabled = isLoading;
+        ui.galleryLoader.classList.toggle('hidden', !isLoading);
+        ui.generateBtn.querySelector('span').textContent = isLoading ? "Generando..." : "Generar";
+        ui.progressText.textContent = (isLoading && total > 1) ? `Generando ${current + 1} de ${total}...` : '';
+        if (!isLoading && !ui.resultsGallery.hasChildNodes()) {
+            ui.galleryPlaceholder.classList.remove('hidden');
         }
-    }
-    
-    // Función para inicializar todo
+    };
+    const addImageToGallery = (imageUrl, delay = 0) => {
+        const card = document.createElement('div');
+        card.className = 'relative aspect-[4/5] rounded-lg shadow-md overflow-hidden fade-in';
+        card.style.animationDelay = `${delay * 100}ms`;
+        card.innerHTML = `<img src="${imageUrl}" alt="Generated image" class="w-full h-full object-cover"><a href="${imageUrl}" download="StudioPro_Result_${Date.now()}.png" class="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition"><i class="fas fa-download"></i></a>`;
+        ui.resultsGallery.prepend(card);
+    };
+
     function init() {
         loadSettings();
         loadPresets();
-        // El resto del código de inicialización (como uploaders, etc.)
+        checkGenerateButtonState();
     }
-
     init();
-    
-    // (Aquí iría el resto del JS que ya conoces, como checkGenerateButtonState, setLoadingState, etc.)
-    // He omitido algunas partes repetitivas por brevedad, pero la estructura y la nueva lógica están aquí.
-    // El código completo de la respuesta anterior se puede adaptar fácilmente a esta estructura.
 });
 </script>
 </body>
 </html>
+
 
