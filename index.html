@@ -1,366 +1,344 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suite de Inteligencia de Mercado (IA)</title>
+    <title>Studio IA - Tu Director de Arte IA</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; color: #333; }
-        :root { --brand-color: #0052CC; --brand-dark: #003E99; }
-        .modal { transition: opacity 0.3s ease-in-out; }
-        .modal-content { transform: scale(0.95); opacity: 0; transition: all 0.3s ease-in-out; }
-        .modal.visible { opacity: 1; pointer-events: auto; }
-        .modal.visible .modal-content { transform: scale(1); opacity: 1; }
-        .loader { border-top-color: var(--brand-color); animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .tab-button { transition: all 0.3s ease; border-bottom: 3px solid transparent; padding-bottom: 0.75rem; color: #6c757d; }
-        .tab-button.active { border-bottom-color: var(--brand-color); color: var(--brand-color); font-weight: 700; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .prose h3 { font-size: 1.5rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-        .prose p { margin-bottom: 1rem; line-height: 1.6; }
-        .prose strong { font-weight: bold; }
-        .prose sup { font-size: 0.75em; vertical-align: super; }
+        :root { --bg-primary: #111827; --bg-secondary: #1F2937; --border-color: #374151; --text-primary: #F9FAFB; --text-secondary: #9CA3AF; --accent-primary: #2563EB; --accent-glow: rgba(37, 99, 235, 0.5); }
+        html.dark { color-scheme: dark; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); }
+        h1, h2, h3, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .btn-primary { background-color: var(--accent-primary); transition: all 0.3s ease; box-shadow: 0 0 15px rgba(37, 99, 235, 0); }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 20px var(--accent-glow); }
+        .btn-primary:disabled { background: #374151; cursor: not-allowed; }
+        .loader { width: 48px; height: 48px; border: 3px solid var(--text-primary); border-radius: 50%; display: inline-block; position: relative; box-sizing: border-box; animation: rotation 1s linear infinite; }
+        .loader::after { content: ''; box-sizing: border-box; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px; border-radius: 50%; border: 3px solid; border-color: var(--accent-primary) transparent; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .fade-in-up { animation: fadeInUp 0.6s ease-in-out forwards; opacity: 0; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .upload-box { border: 2px dashed var(--border-color); background-color: rgba(31, 41, 55, 0.5); transition: all 0.3s ease; }
+        .upload-box:hover { border-color: var(--accent-primary); background-color: var(--bg-secondary); }
+        .mode-btn.active { background-color: var(--accent-primary); color: var(--text-primary); }
+        .image-card:hover .image-overlay { opacity: 1; }
     </style>
 </head>
-<body class="antialiased">
-
-    <!-- Modal de Configuración -->
-    <div id="config-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-white rounded-lg shadow-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Centro de Mando Estratégico</h2>
-            <p class="text-gray-600 mb-6">Define tu negocio para que la IA genere una estrategia 100% a medida.</p>
-            <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<body class="min-h-screen">
+    <header class="bg-black bg-opacity-30 backdrop-blur-lg p-4 flex justify-between items-center sticky top-0 z-20 border-b border-gray-800">
+        <div class="flex items-center space-x-3">
+            <h1 class="text-2xl font-bold text-white font-heading">Studio IA</h1>
+            <span class="hidden md:inline-block bg-gray-700 text-blue-400 text-xs font-semibold px-2 py-1 rounded-full">PRO</span>
+        </div>
+    </header>
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+        <div class="lg:col-span-4 xl:col-span-3 bg-secondary rounded-xl border border-border-color p-6 space-y-6 self-start fade-in-up">
+            <div class="bg-primary rounded-lg p-1 flex">
+                <button id="mode-single" class="mode-btn w-1/2 p-2 rounded-md text-sm font-semibold active">Producto Individual</button>
+                <button id="mode-collection" class="mode-btn w-1/2 p-2 rounded-md text-sm font-semibold">Book de Colección</button>
+            </div>
+            <div id="single-product-panel" class="space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold mb-2 font-heading">1. Prenda Principal</h2>
+                    <div id="uploader-main" class="upload-box p-4 rounded-lg"><input type="file" class="hidden image-input" data-uploader="main"><div class="upload-prompt flex flex-col items-center justify-center text-gray-400"><i class="fas fa-tshirt text-4xl mb-2"></i><p class="font-semibold text-sm">Arrastra o haz clic para subir</p></div><div class="image-preview-container hidden relative"><img src="#" alt="Vista previa" class="image-preview w-full h-auto rounded-md"/><button class="remove-image-btn absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button></div></div>
+                </div>
+                <div class="space-y-4">
+                    <h2 class="text-lg font-bold font-heading">2. Dirección de Arte IA</h2>
                     <div>
-                        <label for="company-name-input" class="block text-sm font-bold text-gray-700 mb-1">Nombre de la Empresa:</label>
-                        <input type="text" id="company-name-input" class="w-full bg-gray-50 border border-gray-300 text-gray-800 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: Mi Tienda Online">
+                        <label for="photo-style" class="block text-sm font-medium text-gray-400 mb-1">Estilo Profesional (10 Opciones)</label>
+                        <select id="photo-style" class="w-full p-2 bg-primary border border-border-color rounded-md shadow-sm focus:ring-accent-primary focus:border-accent-primary">
+                            <option value="fitness">Fitness / Gimnasio</option>
+                            <option value="beachwear">Traje de Baño / Playa</option>
+                            <option value="winter_fashion">Moda de Invierno</option>
+                            <option value="urban_lookbook">Lookbook Urbano</option>
+                            <option value="scandi_minimalist">Minimalista Escandinavo</option>
+                            <option value="luxury_fashion">Lujo / Alta Costura</option>
+                            <option value="boho_lifestyle">Bohemio / Estilo de Vida</option>
+                            <option value="corporate_business">Corporativo / Negocios</option>
+                            <option value="kids_playful">Ropa Infantil / Juguetona</option>
+                            <option value="studio_product">Producto en Estudio (Bodegón)</option>
+                        </select>
                     </div>
-                    <div>
-                        <label for="company-sector-input" class="block text-sm font-bold text-gray-700 mb-1">Sector y País:</label>
-                        <input type="text" id="company-sector-input" class="w-full bg-gray-50 border border-gray-300 text-gray-800 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: E-commerce de Zapatillas en Perú">
+                     <div>
+                        <label for="model-desc" class="block text-sm font-medium text-gray-400 mb-1">Descripción del Modelo</label>
+                        <input type="text" id="model-desc" class="w-full p-2 bg-primary border border-border-color rounded-md" placeholder="Ej: Mujer latina, pelo castaño, 25 años">
                     </div>
+                </div>
+            </div>
+             <div id="collection-photoshoot-panel" class="hidden space-y-6">
+                 <div>
+                    <h2 class="text-lg font-bold mb-1 font-heading">1. Colección de Prendas</h2>
+                    <div id="uploader-collection" class="upload-box p-4 rounded-lg"><input type="file" id="collection-input" class="hidden" multiple accept="image/*"><div class="upload-prompt flex flex-col items-center justify-center text-gray-400"><i class="fas fa-images text-4xl mb-2"></i><p class="font-semibold text-sm">Subir hasta 10 prendas</p></div></div>
+                    <div id="collection-previews" class="grid grid-cols-4 gap-2 mt-2"></div>
                 </div>
                  <div>
-                    <label for="api-key-input" class="block text-sm font-bold text-gray-700 mb-1">Tu Clave API de Google AI:</label>
-                    <input type="password" id="api-key-input" class="w-full bg-gray-50 border border-gray-300 text-gray-800 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Pega tu clave aquí (comienza con AIzaSy...)">
-                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-sm text-blue-600 hover:underline mt-1 inline-block">¿No tienes una clave? Obtenla gratis.</a>
+                    <h2 class="text-lg font-bold mb-2 font-heading">2. Briefing del Photoshoot</h2>
+                     <select id="collection-photo-style" class="w-full p-2 bg-primary border border-border-color rounded-md shadow-sm focus:ring-accent-primary focus:border-accent-primary mb-2">
+                        <option value="fitness">Estilo: Fitness / Gimnasio</option>
+                        <option value="beachwear">Estilo: Traje de Baño / Playa</option>
+                        <option value="winter_fashion">Estilo: Moda de Invierno</option>
+                        <option value="urban_lookbook">Estilo: Lookbook Urbano</option>
+                        <option value="scandi_minimalist">Estilo: Minimalista Escandinavo</option>
+                        <option value="luxury_fashion">Estilo: Lujo / Alta Costura</option>
+                        <option value="boho_lifestyle">Estilo: Bohemio / Estilo de Vida</option>
+                        <option value="corporate_business">Estilo: Corporativo / Negocios</option>
+                        <option value="kids_playful">Estilo: Ropa Infantil / Juguetona</option>
+                    </select>
+                    <textarea id="collection-prompt" rows="4" class="w-full p-2 bg-primary border border-border-color rounded-md" placeholder="Ej: Tres modelos diferentes (2 mujeres, 1 hombre) interactuando."></textarea>
                 </div>
                 <div>
-                    <label for="products-input" class="block text-sm font-bold text-gray-700 mb-1">Productos/Servicios Clave:</label>
-                    <textarea id="products-input" rows="6" class="w-full bg-gray-50 border border-gray-300 text-gray-800 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Pega tu lista de productos aquí.&#10;Ej: Zapatilla Correr Pro, zapatilla correr, https://...&#10;Botines de Cuero, botines cuero hombre, https://..."></textarea>
-                    <p class="text-xs text-gray-500 mt-1">Formato por línea: <strong>Nombre del Producto, palabras clave separadas por comas, URL completa</strong></p>
+                    <label for="collection-results-count" class="block text-sm font-medium text-gray-400 mb-1">Número de Resultados (1-10)</label>
+                    <input type="number" id="collection-results-count" value="4" min="1" max="10" class="w-full p-2 bg-primary border border-border-color rounded-md">
                 </div>
             </div>
-            <button id="save-config-button" class="mt-8 w-full text-white font-bold py-3 px-8 rounded-md transition duration-300 text-lg shadow-md" style="background-color: var(--brand-color);">Guardar y Empezar</button>
+            <button id="generate-btn" class="w-full py-3 px-4 text-white font-bold text-base rounded-lg shadow-lg btn-primary flex items-center justify-center space-x-2" disabled><i class="fas fa-magic"></i><span id="generate-btn-text">Generar</span></button>
+             <p id="progress-text" class="text-center text-sm text-gray-400 h-4"></p>
         </div>
-    </div>
-
-    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
-        <header class="text-center mb-8 relative">
-            <h1 id="main-title" class="text-4xl md:text-5xl font-extrabold text-black mb-2 uppercase">SUITE DE INTELIGENCIA IA</h1>
-            <p id="main-subtitle" class="text-xl text-gray-700 font-semibold">Configura tu negocio para empezar</p>
-            <button id="change-config" class="absolute top-0 right-0 text-sm text-gray-500 hover:text-blue-600 underline">Cambiar Configuración</button>
-        </header>
-
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-4xl mx-auto border">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <input type="text" id="keyword-input" class="w-full bg-gray-50 border border-gray-300 text-gray-800 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg" placeholder="Analiza cualquier término...">
-                <button id="search-button" class="text-white font-bold py-3 px-8 rounded-md transition duration-300 w-full sm:w-auto flex items-center justify-center text-lg shadow-md" style="background-color: var(--brand-color);">Analizar</button>
+        <div class="lg:col-span-8 xl:col-span-9 p-6">
+            <h2 class="text-2xl font-bold mb-4 font-heading">Resultados</h2>
+            <div id="results-gallery" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 min-h-[600px]">
+                <div id="gallery-placeholder" class="col-span-full flex flex-col items-center justify-center text-center text-gray-500 h-full fade-in-up"><h3 class="text-xl font-semibold font-heading text-gray-300">Tu lienzo creativo espera</h3><p class="text-gray-500 max-w-sm">Configura tu sesión de fotos a la izquierda y observa cómo la IA da vida a tus prendas.</p></div>
+                <div id="gallery-loader" class="hidden col-span-full flex flex-col items-center justify-center text-center text-gray-500 h-full"><span class="loader"></span><h3 class="text-lg font-semibold mt-4 text-gray-400">Creando magia...</h3></div>
             </div>
         </div>
-        
-        <div id="initial-state" class="text-center p-8 bg-white rounded-lg max-w-4xl mx-auto border">
-             <h2 class="text-2xl font-bold text-gray-800">Bienvenido a tu Suite de Inteligencia de Mercado</h2>
-             <p class="text-gray-600 mt-2">Introduce un término de búsqueda para comenzar.</p>
-        </div>
-
-        <div id="results-container" class="hidden">
-             <!-- Los resultados se renderizarán aquí dinámicamente -->
-        </div>
-    </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const App = {
-        state: { config: null, currentKeyword: '', currentRelevantProducts: [] },
-        elements: {},
-
-        init() {
-            this.elements = {
-                configModal: document.getElementById('config-modal'),
-                companyNameInput: document.getElementById('company-name-input'),
-                companySectorInput: document.getElementById('company-sector-input'),
-                apiKeyInput: document.getElementById('api-key-input'),
-                productsInput: document.getElementById('products-input'),
-                saveConfigButton: document.getElementById('save-config-button'),
-                changeConfigButton: document.getElementById('change-config'),
-                mainTitle: document.getElementById('main-title'),
-                mainSubtitle: document.getElementById('main-subtitle'),
-                searchButton: document.getElementById('search-button'),
-                keywordInput: document.getElementById('keyword-input'),
-                resultsContainer: document.getElementById('results-container'),
-                initialState: document.getElementById('initial-state'),
-            };
-            this.loadConfig();
-            this.bindEvents();
-        },
-
-        bindEvents() {
-            this.elements.saveConfigButton.addEventListener('click', () => this.saveConfig());
-            this.elements.changeConfigButton.addEventListener('click', () => this.showConfigModal());
-            this.elements.searchButton.addEventListener('click', () => this.handleSearch());
-            this.elements.keywordInput.addEventListener('keypress', e => e.key === 'Enter' && this.handleSearch());
-            this.elements.resultsContainer.addEventListener('click', e => {
-                const button = e.target.closest('button');
-                if (!button) return;
-                if (button.dataset.tab) this.switchTab(button.dataset.tab);
-                if (button.classList.contains('develop-answer-button')) this.handleDevelopAnswer(button);
-                if (button.id === 'generate-blog-button') this.generateBlogPost();
-                if (button.classList.contains('copy-button')) this.copyToClipboard(button);
-            });
-        },
-
-        loadConfig() {
-            const storedConfig = localStorage.getItem('universalSuiteConfig_v4');
-            if (storedConfig) {
-                this.state.config = JSON.parse(storedConfig);
-                this.updateHeaders();
-            } else {
-                this.showConfigModal();
-            }
-        },
-
-        saveConfig() {
-            const productsText = this.elements.productsInput.value.trim();
-            const newConfig = {
-                name: this.elements.companyNameInput.value.trim(),
-                sector: this.elements.companySectorInput.value.trim(),
-                apiKey: this.elements.apiKeyInput.value.trim(),
-                productsText: productsText,
-                products: this.parseProducts(productsText)
-            };
-            if (!newConfig.name || !newConfig.sector || !newConfig.apiKey) {
-                alert('Nombre, Sector y Clave API son obligatorios.');
-                return;
-            }
-            this.state.config = newConfig;
-            localStorage.setItem('universalSuiteConfig_v4', JSON.stringify(newConfig));
-            this.updateHeaders();
-            this.hideConfigModal();
-        },
-
-        showConfigModal() {
-            if (this.state.config) {
-                this.elements.companyNameInput.value = this.state.config.name || '';
-                this.elements.companySectorInput.value = this.state.config.sector || '';
-                this.elements.apiKeyInput.value = this.state.config.apiKey || '';
-                this.elements.productsInput.value = this.state.config.productsText || '';
-            }
-            this.elements.configModal.classList.add('visible');
-        },
-
-        hideConfigModal() { this.elements.configModal.classList.remove('visible'); },
-
-        updateHeaders() {
-            if (this.state.config?.name) {
-                this.elements.mainTitle.innerHTML = `${this.state.config.name.toUpperCase()} <span style="color: var(--brand-color);">IA</span>`;
-                this.elements.mainSubtitle.textContent = `Análisis Estratégico para: ${this.state.config.sector}`;
-            }
-        },
-
-        parseProducts(productsText) {
-            if (!productsText) return [];
-            return productsText.split('\n').filter(line => line.trim() !== '').map(line => {
-                const parts = line.split(',');
-                if (parts.length < 3) return null;
-                const name = parts.shift().trim();
-                const url = parts.pop().trim();
-                const triggers = parts.map(t => t.trim().toLowerCase());
-                return { name, triggers, url };
-            }).filter(p => p);
-        },
-
-        async handleSearch() {
-            if (!this.state.config) { this.showConfigModal(); return; }
-            this.state.currentKeyword = this.elements.keywordInput.value.trim();
-            if (!this.state.currentKeyword) { alert("Por favor, introduce una palabra clave."); return; }
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- UI Elements ---
+            const generateBtn = document.getElementById('generate-btn');
+            const generateBtnText = document.getElementById('generate-btn-text');
+            const progressText = document.getElementById('progress-text');
+            const resultsGallery = document.getElementById('results-gallery');
+            const galleryPlaceholder = document.getElementById('gallery-placeholder');
+            const galleryLoader = document.getElementById('gallery-loader');
+            const modeSingleBtn = document.getElementById('mode-single');
+            const modeCollectionBtn = document.getElementById('mode-collection');
+            const singleProductPanel = document.getElementById('single-product-panel');
+            const collectionPhotoshootPanel = document.getElementById('collection-photoshoot-panel');
+            const collectionUploader = document.getElementById('uploader-collection');
+            const collectionInput = document.getElementById('collection-input');
+            const collectionPreviews = document.getElementById('collection-previews');
             
-            this.elements.initialState.classList.add('hidden');
-            this.elements.resultsContainer.classList.remove('hidden');
-            this.renderLoader(`La IA está analizando el mercado para "${this.state.currentKeyword}"...`);
+            // --- State ---
+            let currentMode = 'single';
+            let uploadedImages = { main: null };
+            let collectionImages = [];
 
-            try {
-                this.state.currentRelevantProducts = this.findRelevantProducts(this.state.currentKeyword);
-                const seoData = await this.fetchAiSeoData(this.state.currentKeyword);
-                
-                this.renderLayout();
-                this.renderAllTabs(seoData);
-                
-                const summaryHtml = await this.generateStrategicSummary(seoData);
-                document.getElementById('strategic-summary-container').innerHTML = summaryHtml;
-            } catch (e) {
-                this.renderError(e.message);
-            }
-        },
-
-        findRelevantProducts(mainKeyword) {
-            if (!this.state.config?.products) return [];
-            const found = new Set();
-            this.state.config.products.forEach(p => p.triggers.some(t => mainKeyword.toLowerCase().includes(t)) && found.add(p));
-            return Array.from(found);
-        },
-
-        async callGeminiAPI(systemPrompt, userQuery, responseMimeType = "application/json") {
-            if (!this.state.config?.apiKey) throw new Error("Clave API no configurada.");
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${this.state.config.apiKey}`;
-            const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, generationConfig: { responseMimeType } };
-            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!response.ok) { const errorBody = await response.json(); throw new Error(errorBody?.error?.message || `Error de API: ${response.statusText}`); }
-            const result = await response.json();
-            if (!result.candidates?.[0]?.content) throw new Error("La IA no generó una respuesta válida (puede ser por políticas de seguridad).");
-            return result.candidates[0].content.parts[0].text;
-        },
-
-        async fetchAiSeoData(keyword) {
-            const systemPrompt = `You are a highly accurate SEO Data Analyst AI. Your sole purpose is to provide realistic, reliable SEO metrics emulating top-tier paid tools like SEMrush or Ahrefs for the specified market. Your response MUST be a single, minified JSON object with this exact structure: {"volume": <number>, "difficulty": <number>, "cpc": <number>, "relatedKeywords": [{"keyword": "<string>", "volume": <number>, "difficulty": <number>}], "peopleAlsoAsk": [{"q": "<string>", "category": "<string>"}]}. The "peopleAlsoAsk" array must contain at least 15 diverse questions. All data MUST be accurate for the specified market. DO NOT add any extra text, explanations, or formatting. Only the JSON.`;
-            const userQuery = `Generate the SEO data JSON for the keyword "${keyword}" for the market: "${this.state.config.sector}".`;
-            const jsonString = await this.callGeminiAPI(systemPrompt, userQuery);
-            try { return JSON.parse(jsonString); } catch (e) { throw new Error("La IA de datos devolvió un formato incorrecto. Intenta de nuevo."); }
-        },
-
-        async generateContent(systemPrompt, userQuery){
-            return this.callGeminiAPI(systemPrompt, userQuery, "text/plain");
-        },
-        
-        async generateStrategicSummary(seoData) {
-            const systemPrompt = `You are a Chief Marketing Officer for "${this.state.config.name}".`;
-            const userQuery = `Based on SEO data for "${this.state.currentKeyword}": ${JSON.stringify(seoData)}, and knowing the relevant products are ${this.state.currentRelevantProducts.map(p=>p.name).join(', ') || 'none'}, provide a concise executive summary (4-5 sentences) with prioritized actions. Format as simple HTML (<p>, <strong>).`;
-            return this.generateContent(systemPrompt, userQuery);
-        },
-
-        async handleDevelopAnswer(button) {
-            const question = button.dataset.question;
-            const answerContainer = button.closest('li').querySelector('.answer-container');
-            button.disabled = true;
-            button.textContent = '...';
-            answerContainer.style.display = 'block';
-            answerContainer.innerHTML = `<div class="p-4"><div class="loader h-6 w-6 mx-auto"></div></div>`;
-            try {
-                const systemPrompt = `You are an expert copywriter for "${this.state.config.name}", specializing in "${this.state.config.sector}".`;
-                const productContext = this.state.currentRelevantProducts.length > 0 ? `Relevant product: ${this.state.currentRelevantProducts[0].name}.` : '';
-                const userQuery = `Write an expert, concise answer (100-150 words) for the question: "${question}". ${productContext} Subtly mention the product if it's a good solution. Format as simple HTML (<p>, <strong>, <ul>, <li>).`;
-                answerContainer.innerHTML = `<div class="prose max-w-none p-4">${await this.generateContent(systemPrompt, userQuery)}</div>`;
-            } catch (error) {
-                answerContainer.innerHTML = `<p class="text-red-600 p-4">Error: ${error.message}</p>`;
-            } finally {
-                button.disabled = false;
-                button.textContent = 'Desarrollar';
-            }
-        },
-
-        async generateBlogPost() {
-            const blogButton = document.getElementById('generate-blog-button');
-            const blogLoader = document.getElementById('blog-loader');
-            const blogOutput = document.getElementById('blog-output');
-            blogButton.style.display = 'none';
-            blogLoader.style.display = 'block';
-            try {
-                const systemPrompt = `You are a senior SEO content strategist for "${this.state.config.name}". You write expert, persuasive, and structured blog posts. YOU MUST follow this structure: 1. Title: "<h3>Title:". 2. Keywords: "<p><strong>SEM Keywords:</strong>". 3. Body: 400-600 words with an engaging intro, product integration (if provided), scientific concepts (using <sup></sup> tags for citations), and [Image reference: detailed description] directives. 4. Format: ONLY use simple HTML (<h3>, <p>, <strong>, <sup>). NO h1, h2, or other tags.`;
-                const productPrompt = this.state.currentRelevantProducts.length > 0 ? `The product to integrate is ${this.state.currentRelevantProducts[0].name}.` : '';
-                const userQuery = `Write a blog post about "${this.state.currentKeyword}" for the "${this.state.config.sector}" market, following all rules. ${productPrompt}`;
-                const blogHtml = await this.generateContent(systemPrompt, userQuery);
-                blogOutput.querySelector('#blog-output-content').innerHTML = blogHtml;
-                blogOutput.style.display = 'block';
-            } catch (error) {
-                blogOutput.querySelector('#blog-output-content').innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
-            } finally {
-                blogLoader.style.display = 'none';
-            }
-        },
-
-        renderLoader(message) {
-            this.elements.resultsContainer.innerHTML = `<div class="text-center py-10"><div class="loader h-12 w-12 mx-auto mb-4"></div><p class="text-lg text-gray-600">${message}</p></div>`;
-        },
-        renderError(message) {
-            this.elements.resultsContainer.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md my-4 max-w-4xl mx-auto"><strong>Error:</strong> ${message}</div>`;
-        },
-        renderLayout() {
-            this.elements.resultsContainer.innerHTML = `
-                <div class="border-b border-gray-200 mb-6">
-                    <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
-                        <button class="tab-button active" data-tab="summary">Resumen y Productos</button>
-                        <button class="tab-button" data-tab="keywords">Palabras Clave</button>
-                        <button class="tab-button" data-tab="content">Creación de Contenido</button>
-                        <button class="tab-button" data-tab="blog">Creador de Blogs</button>
-                    </nav>
-                </div>
-                <div id="tab-content-summary" class="tab-content active"></div>
-                <div id="tab-content-keywords" class="tab-content"></div>
-                <div id="tab-content-content" class="tab-content"></div>
-                <div id="tab-content-blog" class="tab-content"></div>`;
-        },
-        renderAllTabs(data) {
-            document.getElementById('tab-content-summary').innerHTML = this.renderSummaryTabContent();
-            document.getElementById('tab-content-keywords').innerHTML = this.renderKeywordsTabContent(data);
-            document.getElementById('tab-content-content').innerHTML = this.renderContentTabContent(data.peopleAlsoAsk || []);
-            document.getElementById('tab-content-blog').innerHTML = this.renderBlogTabContent();
-            this.switchTab('summary');
-        },
-        renderSummaryTabContent() {
-            return `<div class="p-1"><div id="strategic-summary-container" class="strategic-summary bg-white p-6 rounded-lg shadow-md border"><div class="loader h-8 w-8"></div></div>${this.renderProductRecommendation(this.state.currentRelevantProducts)}</div>`;
-        },
-        renderProductRecommendation(products) {
-            if (!products.length) return '';
-            return `<div class="bg-white p-6 rounded-lg shadow-md border mt-6"><h4 class="text-xl font-bold mb-3 text-gray-800">Productos/Servicios Recomendados:</h4><ul class="list-disc list-inside space-y-2">${products.map(p => `<li><a href="${p.url}" target="_blank" class="text-blue-600 hover:underline font-semibold">${p.name}</a></li>`).join('')}</ul></div>`;
-        },
-        renderKeywordsTabContent(data) {
-            const allKeywords = [{ keyword: this.state.currentKeyword, ...data }, ...(data.relatedKeywords || [])];
-            const rows = allKeywords.map(kw => {
-                const kd = kw.difficulty > 70 ? 'bg-red-500' : kw.difficulty > 40 ? 'bg-yellow-500' : 'bg-green-500';
-                return `<tr class="hover:bg-gray-50"><td class="px-6 py-4 text-sm font-medium text-gray-900">${kw.keyword}</td><td class="px-6 py-4 text-sm text-gray-600">${(kw.volume || 0).toLocaleString('es-ES')}</td><td class="px-6 py-4 text-sm text-gray-600"><div class="flex items-center gap-2"><span>${kw.difficulty || 0}</span><div class="w-24 h-2 rounded-full bg-gray-200"><div class="${kd} rounded-full h-full" style="width: ${kw.difficulty || 0}%"></div></div></div></td></tr>`;
-            }).join('');
-            return `<div class="p-1"><div class="bg-white rounded-lg overflow-hidden shadow-md border"><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Palabra Clave</th><th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Volumen</th><th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Dificultad (KD)</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">${rows}</tbody></table></div></div></div>`;
-        },
-        renderContentTabContent(questions) {
-            const schema = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": questions.map(q => ({ "@type": "Question", "name": q.q, "acceptedAnswer": { "@type": "Answer", "text": `Encuentra la respuesta en nuestro artículo sobre ${this.state.currentKeyword}.` } })) }, null, 2);
-            const questionsHtml = questions.map(q => `<li class="py-4 border-b last:border-b-0 border-gray-200"><div class="flex justify-between items-center gap-4"><span class="font-semibold text-gray-800">${q.q}</span><button class="develop-answer-button flex-shrink-0 text-white font-semibold py-1 px-3 rounded-full text-xs" style="background-color: var(--brand-color);" data-question="${q.q.replace(/"/g, '&quot;')}">Desarrollar</button></div><div class="answer-container mt-2 bg-gray-50 rounded" style="display: none;"></div></li>`).join('');
-            return `<div class="p-1 space-y-8"><div><div class="bg-white p-6 rounded-lg shadow-md border"><h3 class="text-2xl font-bold mb-2">Centro de Creación de Contenido AEO</h3><p class="text-gray-600">Usa la IA para desarrollar respuestas expertas para cada pregunta.</p><ul class="mt-4">${questionsHtml}</ul></div></div><div><div class="bg-white p-6 rounded-lg shadow-md border"><h3 class="text-xl font-bold">Generador de Schema (FAQPage)</h3><p class="text-gray-600">Copia este código en tu página para mejorar tu posicionamiento.</p><div class="mt-4 relative"><pre class="bg-gray-100 p-4 rounded-md overflow-x-auto"><code>${schema}</code></pre><button class="copy-button absolute top-2 right-2 bg-white text-xs px-2 py-1 rounded border">Copiar</button></div></div></div></div>`;
-        },
-        renderBlogTabContent() {
-            return `<div class="p-1"><div class="bg-white rounded-lg p-6 text-center shadow-md border"><h3 class="text-2xl font-bold">Creador de Blogs (Estilo Experto)</h3><p class="text-gray-600 mb-6">Genera un artículo sobre "${this.state.currentKeyword}" con la estructura profesional.</p><button id="generate-blog-button" class="text-white font-bold py-3 px-6 rounded-md shadow-md" style="background-color: var(--brand-color);">Generar Borrador Experto</button><div id="blog-loader" class="text-center py-10" style="display: none;"><div class="loader h-10 w-10 mx-auto mb-4"></div><p>La IA está redactando el artículo...</p></div><div id="blog-output" class="mt-8 text-left" style="display: none;"><div class="border rounded-lg p-6 bg-gray-50 relative"><button class="copy-button absolute top-2 right-2 bg-white text-xs px-2 py-1 rounded border">Copiar HTML</button><div id="blog-output-content" class="prose max-w-none"></div></div></div></div></div>`;
-        },
-
-        switchTab(targetTab) {
-            this.elements.resultsContainer.querySelectorAll('.tab-button').forEach(t => t.classList.toggle('active', t.dataset.tab === targetTab));
-            this.elements.resultsContainer.querySelectorAll('.tab-content').forEach(c => c.style.display = c.id === `tab-content-${targetTab}` ? 'block' : 'none');
-        },
-        copyToClipboard(button) {
-            const blogContainer = button.closest('#blog-output');
-            const schemaContainer = button.closest('.relative')?.querySelector('pre');
-            const answerContainer = button.closest('.answer-container');
-            let textToCopy = '';
-
-            if (blogContainer) textToCopy = blogContainer.querySelector('#blog-output-content').innerHTML;
-            else if (schemaContainer) textToCopy = schemaContainer.innerText;
-            else if (answerContainer) textToCopy = answerContainer.querySelector('.prose').innerHTML;
-            
-            if (textToCopy) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    const originalText = button.textContent;
-                    button.textContent = '¡Copiado!';
-                    setTimeout(() => { button.textContent = originalText || 'Copiar'; }, 2000);
+            // --- Uploader Initialization ---
+            function initializeUploader(uploaderId) {
+                const uploaderEl = document.getElementById(uploaderId);
+                const inputEl = uploaderEl.querySelector('.image-input');
+                const promptEl = uploaderEl.querySelector('.upload-prompt');
+                const previewContainerEl = uploaderEl.querySelector('.image-preview-container');
+                const previewEl = uploaderEl.querySelector('.image-preview');
+                const removeBtn = uploaderEl.querySelector('.remove-image-btn');
+                const uploaderKey = inputEl.dataset.uploader;
+                uploaderEl.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('remove-image-btn')) { inputEl.click(); }
+                });
+                inputEl.addEventListener('change', e => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = re => {
+                            uploadedImages[uploaderKey] = re.target.result.split(',')[1];
+                            previewEl.src = re.target.result;
+                            promptEl.classList.add('hidden');
+                            previewContainerEl.classList.remove('hidden');
+                            checkGenerateButtonState();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+                removeBtn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    inputEl.value = '';
+                    uploadedImages[uploaderKey] = null;
+                    promptEl.classList.remove('hidden');
+                    previewContainerEl.classList.add('hidden');
+                    checkGenerateButtonState();
                 });
             }
-        }
-    };
-    App.init();
-});
-</script>
+            ['uploader-main'].forEach(initializeUploader);
 
+            collectionUploader.addEventListener('click', () => collectionInput.click());
+            collectionInput.addEventListener('change', e => {
+                const files = Array.from(e.target.files);
+                if (collectionImages.length + files.length > 10) { alert("Puedes subir un máximo de 10 prendas."); return; }
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = re => {
+                        const base64 = re.target.result.split(',')[1];
+                        collectionImages.push({ name: file.name, base64 });
+                        renderCollectionPreviews();
+                        checkGenerateButtonState();
+                    };
+                    reader.readAsDataURL(file);
+                });
+                collectionInput.value = '';
+            });
+
+            function renderCollectionPreviews() {
+                collectionPreviews.innerHTML = '';
+                collectionImages.forEach((img, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'relative aspect-square';
+                    div.innerHTML = `<img src="data:image/png;base64,${img.base64}" class="w-full h-full object-cover rounded-md"><button data-index="${index}" class="remove-collection-item absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">&times;</button>`;
+                    collectionPreviews.appendChild(div);
+                });
+                collectionUploader.querySelector('.upload-prompt').classList.toggle('hidden', collectionImages.length > 0);
+            }
+            
+            collectionPreviews.addEventListener('click', e => {
+                if(e.target.classList.contains('remove-collection-item')) {
+                    collectionImages.splice(parseInt(e.target.dataset.index, 10), 1);
+                    renderCollectionPreviews();
+                    checkGenerateButtonState();
+                }
+            });
+
+            // --- Mode Switching ---
+            function switchMode(mode) {
+                currentMode = mode;
+                modeSingleBtn.classList.toggle('active', mode === 'single');
+                modeCollectionBtn.classList.toggle('active', mode === 'collection');
+                singleProductPanel.classList.toggle('hidden', mode !== 'single');
+                collectionPhotoshootPanel.classList.toggle('hidden', mode !== 'collection');
+                checkGenerateButtonState();
+            }
+            modeSingleBtn.addEventListener('click', () => switchMode('single'));
+            modeCollectionBtn.addEventListener('click', () => switchMode('collection'));
+
+            function checkGenerateButtonState() {
+                generateBtn.disabled = (currentMode === 'single') ? !uploadedImages.main : collectionImages.length === 0;
+            }
+
+            // --- Main Generation Logic ---
+            generateBtn.addEventListener('click', () => {
+                resultsGallery.innerHTML = '';
+                galleryPlaceholder.classList.add('hidden');
+                galleryLoader.classList.remove('hidden');
+                setLoadingState(true, 0, 0);
+                if (currentMode === 'single') handleSingleGeneration();
+                else handleCollectionGeneration();
+            });
+
+            async function handleSingleGeneration() {
+                const prompt = constructPrompt();
+                const images = Object.values(uploadedImages).filter(Boolean);
+                try {
+                    const generatedImage = await callNanoBananaAPI(prompt, images);
+                    if (generatedImage) addImageToGallery(generatedImage);
+                } catch (error) { console.error('Error:', error); }
+                finally { setLoadingState(false, 1, 1); }
+            }
+
+            async function handleCollectionGeneration() {
+                const count = parseInt(document.getElementById('collection-results-count').value, 10);
+                for (let i = 0; i < count; i++) {
+                    setLoadingState(true, i, count);
+                    try {
+                        const garmentsForShot = [...collectionImages].sort(() => 0.5 - Math.random()).slice(0, Math.min(Math.floor(Math.random() * 3) + 1, collectionImages.length));
+                        const prompt = constructPrompt(garmentsForShot);
+                        const images = garmentsForShot.map(g => g.base64);
+                        const generatedImage = await callNanoBananaAPI(prompt, images);
+                        if (generatedImage) addImageToGallery(generatedImage, i);
+                    } catch (error) { console.error(`Error en la generación ${i + 1}:`, error); }
+                }
+                setLoadingState(false, count, count);
+            }
+
+            // --- Prompt Engineering Engine ---
+            function getProfessionalPromptBooster(style, modelDesc) {
+                const negativePrompt = "AVOID the following: 3d render, cgi, cartoon, illustration, blurry, deformed, bad anatomy, ugly, disfigured, low quality, unrealistic, overprocessed skin, plastic look, artifacts.";
+                let masterPrompt = "";
+                switch (style) {
+                    case 'fitness': masterPrompt = `Editorial fitness photoshoot inside a modern, gritty gym with high-contrast cinematic lighting. A ${modelDesc} is performing a dynamic, powerful pose, highlighting the clothing's performance. Shot on a Sony A7R IV, 85mm f/1.4 lens, hyperrealistic, sharp focus, professional color grading.`; break;
+                    case 'beachwear': masterPrompt = `Luxury swimwear campaign photoshoot on a pristine beach at golden hour. A ${modelDesc} poses elegantly near the turquoise water. Soft, warm light. Shot on a Canon EOS R5, 70-200mm f/2.8 lens, photorealistic, high detail, natural skin texture.`; break;
+                    case 'winter_fashion': masterPrompt = `High-fashion winter clothing photoshoot in a snowy aspen forest. A ${modelDesc} is dressed warmly, looking chic. Crisp, cool lighting. Shot on a Fujifilm GFX 100, medium format look, incredibly detailed textures.`; break;
+                    case 'urban_lookbook': masterPrompt = `Street style lookbook photoshoot in Tokyo. A ${modelDesc} has a confident, natural pose against an interesting urban background. Shot on a Leica M11, 35mm f/1.4 lens, candid style, cinematic, film grain, hyperrealistic.`; break;
+                    case 'scandi_minimalist': masterPrompt = `Scandinavian minimalist lookbook. A ${modelDesc} in a calm pose within a minimalist studio. Soft, diffused natural light. Shot on a Fujifilm GFX 100S, exquisite detail in fabric textures. Clean, serene. Hyperrealistic.`; break;
+                    case 'luxury_fashion': masterPrompt = `High-fashion editorial. A ${modelDesc} in an avant-garde pose in a grand architectural space. Dramatic, high-contrast lighting. Shot on a Phase One XF camera, sharp, high-end look. Hyperrealistic.`; break;
+                    case 'boho_lifestyle': masterPrompt = `Candid bohemian-chic photoshoot. A ${modelDesc} is laughing in a sun-drenched field at golden hour. Warm, hazy light, artistic lens flare. Shot on a Canon EOS 5D Mark IV, 50mm f/1.2, dreamy depth of field. Photorealistic.`; break;
+                    case 'corporate_business': masterPrompt = `Professional corporate lookbook. A ${modelDesc} with a confident expression in a modern office, blurred city view. Clean, soft lighting. Shot on a Nikon Z8, 24-70mm f/2.8, polished. Hyperrealistic.`; break;
+                    case 'kids_playful': masterPrompt = `Vibrant children's clothing catalog. A ${modelDesc} (described as a child) is captured mid-laugh in a colorful setting. High-key lighting, cheerful. Shot on a Sony A1, 50mm f/1.8 to freeze motion. Hyperrealistic.`; break;
+                    case 'studio_product': masterPrompt = `Professional e-commerce photoshoot of the garment on an invisible mannequin (ghost mannequin effect), in a studio with perfect, even lighting against a solid light gray background (#f2f2f2). Shot on a Phase One camera, macro lens for extreme detail on the fabric.`; break;
+                }
+                return `${masterPrompt} ${negativePrompt}`;
+            }
+            
+            function constructPrompt(collectionItems = null) {
+                if (currentMode === 'single') {
+                    const style = document.getElementById('photo-style').value;
+                    const modelDesc = document.getElementById('model-desc').value || 'professional model';
+                    let finalPrompt = getProfessionalPromptBooster(style, modelDesc);
+                    if (uploadedImages.main && style !== 'studio_product') finalPrompt += ' The model is wearing the main provided garment.';
+                    return finalPrompt;
+                } else {
+                    const style = document.getElementById('collection-photo-style').value;
+                    const baseDesc = document.getElementById('collection-prompt').value || 'A group of models';
+                    let finalPrompt = getProfessionalPromptBooster(style, baseDesc);
+                    const garmentNames = collectionItems.map(g => `'${g.name}'`).join(', ');
+                    finalPrompt += ` The models are showcasing a collection of garments including: ${garmentNames}. Create a cohesive campaign image.`;
+                    return finalPrompt;
+                }
+            }
+            
+            // --- API Call to Google AI Studio ---
+            async function callNanoBananaAPI(prompt, base64ImagesArray) {
+                const apiKey = ""; // API Key is handled by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+                
+                const parts = [{ text: prompt }];
+                base64ImagesArray.forEach(imgData => parts.push({ inlineData: { mimeType: "image/png", data: imgData } }));
+                
+                const payload = {
+                    contents: [{ parts }],
+                    generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+                };
+                
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+                }
+                
+                const result = await response.json();
+                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                if (!base64Data) {
+                    if (result.candidates && result.candidates[0] && result.candidates[0].finishReason === 'SAFETY') {
+                        throw new Error("Imagen bloqueada por políticas de seguridad de la IA.");
+                    }
+                    throw new Error("No se recibió una imagen válida de la API.");
+                }
+                return `data:image/png;base64,${base64Data}`;
+            }
+
+            // --- UI Helper Functions ---
+            function setLoadingState(isLoading, current, total) {
+                generateBtn.disabled = isLoading;
+                galleryLoader.classList.toggle('hidden', !isLoading);
+                generateBtnText.textContent = isLoading ? "Generando..." : "Generar";
+                progressText.textContent = (isLoading && total > 1) ? `Generando ${current + 1} de ${total}...` : '';
+                if (!isLoading && !resultsGallery.hasChildNodes()) galleryPlaceholder.classList.remove('hidden');
+            }
+            
+            function addImageToGallery(imageUrl, delay = 0) {
+                const card = document.createElement('div');
+                card.className = 'image-card group relative aspect-[4/5] rounded-lg shadow-lg overflow-hidden fade-in-up';
+                card.style.animationDelay = `${delay * 100}ms`;
+                card.innerHTML = `<img src="${imageUrl}" alt="Generated image" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"><div class="image-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4"><a href="${imageUrl}" download="StudioIA_Result_${Date.now()}.png" class="w-full bg-blue-600 text-white text-sm font-semibold py-2 px-3 rounded-md hover:bg-blue-700 transition flex items-center justify-center space-x-1.5 translate-y-4 group-hover:translate-y-0 duration-300"><i class="fas fa-download"></i><span>Descargar</span></a></div>`;
+                resultsGallery.prepend(card);
+            }
+
+            checkGenerateButtonState();
+        });
+    </script>
 </body>
 </html>
+
