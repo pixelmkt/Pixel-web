@@ -1,0 +1,45 @@
+/* style.css */
+:root {
+    --fondo-crema: #F5F1E8;
+    --rojo-acento: #C6341E;
+    --gris-oscuro: #4A4A4A;
+    --linea-clara: #E0DACE;
+    --texto-claro: #F5F1E8;
+    --fondo-oscuro: #1E1E1E;
+}
+
+body { 
+    font-family: 'IBM Plex Mono', monospace; 
+    background-color: var(--fondo-crema); 
+    color: var(--gris-oscuro);
+}
+
+.headline { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--rojo-acento); }
+
+.btn {
+    background-color: var(--rojo-acento); color: var(--fondo-crema); border: 1px solid var(--rojo-acento);
+    cursor: pointer; padding: 0.8rem 2rem; border-radius: 999px; font-family: 'Inter', sans-serif;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease;
+}
+.btn:hover:not(:disabled) { background-color: var(--fondo-oscuro); border-color: var(--fondo-oscuro); transform: translateY(-2px); }
+.btn:disabled { background-color: #d1d5db; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed; transform: none;}
+.btn-secondary { background-color: transparent; color: var(--rojo-acento); border: 1px solid var(--rojo-acento); }
+.btn-secondary:hover { background-color: var(--rojo-acento); color: var(--fondo-crema); }
+
+.modal-overlay { background-color: rgba(0,0,0,0.6); transition: opacity 0.3s ease; }
+.modal-content { transition: transform 0.3s ease; background-color: var(--fondo-crema); border: 1px solid var(--linea-clara); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+.fade-in { animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.upload-box { border: 2px dashed var(--linea-clara); transition: all 0.2s; background-color: #FFFDFA; }
+.upload-box:hover { border-color: var(--rojo-acento); background-color: var(--fondo-crema); }
+
+.loader { width: 48px; height: 48px; border: 4px solid var(--linea-clara); border-top-color: var(--rojo-acento); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.input {
+    background-color: transparent; border: 1px solid var(--linea-clara); color: var(--gris-oscuro);
+    padding: 0.85rem 1rem; border-radius: 4px; width: 100%;
+}
+.input:focus { outline: none; border-color: var(--rojo-acento); }

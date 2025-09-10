@@ -1,520 +1,153 @@
+<!-- index.html (Sin cambios, sigue siendo válido) -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Pro - Plataforma de Creación Visual</title>
+    <title>Studio Pixel - Plataforma de Creación Visual</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .btn-primary { background-color: #4f46e5; transition: background-color 0.2s; }
-        .btn-primary:hover:not(:disabled) { background-color: #4338ca; }
-        .btn-primary:disabled { background-color: #a5b4fc; cursor: not-allowed; }
-        .modal-overlay { background-color: rgba(0,0,0,0.5); transition: opacity 0.3s ease; }
-        .modal-content { transition: transform 0.3s ease; }
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .upload-box { border: 2px dashed #d1d5db; transition: all 0.2s; }
-        .upload-box:hover { border-color: #4f46e5; background-color: #eef2ff; }
-        .loader { width: 48px; height: 48px; border: 4px solid #e5e7eb; border-top-color: #4f46e5; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-gray-800">
+<body>
+    <!-- ... (El resto del HTML sigue igual que en la respuesta anterior) ... -->
+    <div class="flex h-screen bg-fondo-crema">
+        <!-- Sidebar -->
+        <aside class="w-16 flex flex-col items-center space-y-6 py-4 bg-white border-r border-linea-clara shadow-sm">
+            <div class="text-rojo-acento">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 7L12 12L22 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <button id="settings-btn" class="p-2 rounded-lg hover:bg-gray-100 text-gris-oscuro" title="Configuración"><i class="fas fa-cog fa-lg"></i></button>
+            <button id="presets-btn" class="p-2 rounded-lg hover:bg-gray-100 text-gris-oscuro" title="Gestionar Presets"><i class="fas fa-palette fa-lg"></i></button>
+        </aside>
 
-<div class="flex h-screen bg-gray-100">
-    <!-- Sidebar -->
-    <aside class="w-16 flex flex-col items-center space-y-4 py-4 bg-white border-r border-gray-200">
-        <div class="text-indigo-600">
-            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 7L12 12L22 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <button id="settings-btn" class="p-2 rounded-lg hover:bg-gray-200 text-gray-600" title="Configuración">
-            <i class="fas fa-cog fa-lg"></i>
-        </button>
-        <button id="presets-btn" class="p-2 rounded-lg hover:bg-gray-200 text-gray-600" title="Gestionar Presets">
-            <i class="fas fa-palette fa-lg"></i>
-        </button>
-    </aside>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex overflow-hidden">
-        <!-- Control Panel -->
-        <main class="w-full md:w-1/3 lg:w-1/4 xl:w-1/5 p-6 bg-white border-r border-gray-200 overflow-y-auto">
-            <h1 id="brand-name-header" class="text-2xl font-bold mb-6">Studio Pro</h1>
-            
-            <div class="space-y-6">
-                <!-- Mode Switcher -->
-                <div class="bg-gray-200 rounded-lg p-1 flex text-sm">
-                    <button id="mode-single" class="mode-btn w-1/2 p-2 rounded-md font-semibold bg-white text-indigo-600 shadow">Individual</button>
-                    <button id="mode-collection" class="mode-btn w-1/2 p-2 rounded-md font-semibold text-gray-600">Colección</button>
-                </div>
-
-                <!-- Single Product Panel -->
-                <div id="single-product-panel">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="font-semibold block mb-2">1. Prenda Principal</label>
-                            <div id="uploader-main" class="upload-box p-4 rounded-lg text-center cursor-pointer">
-                                <input type="file" class="hidden image-input" data-uploader="main">
-                                <div class="upload-prompt text-gray-500"><i class="fas fa-tshirt text-3xl mb-2"></i><p class="font-semibold text-sm">Subir Prenda</p></div>
-                                <div class="image-preview-container hidden relative"><img src="#" alt="Prenda" class="image-preview w-full h-auto rounded-md"/><button class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button></div>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="photo-style" class="font-semibold block mb-2">2. Estilo Profesional</label>
-                            <select id="photo-style" class="w-full p-2 border border-gray-300 rounded-md shadow-sm"></select>
-                        </div>
-                        <div>
-                            <label for="model-desc" class="font-semibold block mb-2">3. Descripción del Modelo</label>
-                            <input type="text" id="model-desc" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ej: Mujer joven, pelo castaño...">
-                        </div>
-                    </div>
-                </div>
+        <!-- Main Content -->
+        <div class="flex-1 flex overflow-hidden">
+            <!-- Control Panel -->
+            <main class="w-full md:w-1/3 lg:w-1/4 xl:w-1/5 p-6 bg-white border-r border-linea-clara overflow-y-auto">
+                <h1 id="brand-name-header" class="headline text-2xl mb-6">Studio Pixel</h1>
                 
-                <!-- Collection Panel -->
-                <div id="collection-photoshoot-panel" class="hidden">
-                     <div class="space-y-4">
-                        <div>
-                            <label class="font-semibold block mb-2">1. Colección de Prendas (hasta 10)</label>
-                            <div id="uploader-collection" class="upload-box p-4 rounded-lg text-center cursor-pointer">
-                                <input type="file" id="collection-input" class="hidden" multiple accept="image/*">
-                                <div class="upload-prompt text-gray-500"><i class="fas fa-images text-3xl mb-2"></i><p class="font-semibold text-sm">Subir Colección</p></div>
+                <div class="space-y-6">
+                    <div class="bg-gray-100 border border-linea-clara rounded-full p-1 flex text-sm">
+                        <button id="mode-single" class="mode-btn w-1/2 p-2 rounded-full font-semibold bg-white text-rojo-acento shadow">Individual</button>
+                        <button id="mode-collection" class="mode-btn w-1/2 p-2 rounded-full font-semibold text-gris-oscuro">Colección</button>
+                    </div>
+
+                    <!-- Single Product Panel -->
+                    <div id="single-product-panel">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="font-semibold block mb-2">1. Prenda Principal</label>
+                                <div id="uploader-main" class="upload-box p-4 rounded-lg text-center cursor-pointer">
+                                    <input type="file" class="hidden image-input" data-uploader="main" accept="image/*">
+                                    <div class="upload-prompt text-gray-500"><i class="fas fa-tshirt text-3xl mb-2 text-gray-400"></i><p class="font-semibold text-sm">Subir Prenda</p></div>
+                                    <div class="image-preview-container hidden relative"><img src="#" alt="Prenda" class="image-preview w-full h-auto rounded-md"/><button class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button></div>
+                                </div>
                             </div>
-                            <div id="collection-previews" class="grid grid-cols-4 gap-2 mt-2"></div>
-                        </div>
-                        <div>
-                             <label for="collection-photo-style" class="font-semibold block mb-2">2. Estilo Profesional</label>
-                            <select id="collection-photo-style" class="w-full p-2 border border-gray-300 rounded-md shadow-sm"></select>
-                        </div>
-                         <div>
-                            <label for="collection-prompt" class="font-semibold block mb-2">3. Briefing del Photoshoot</label>
-                            <textarea id="collection-prompt" rows="3" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ej: Tres modelos diferentes..."></textarea>
-                        </div>
-                         <div>
-                            <label for="collection-results-count" class="font-semibold block mb-2">4. Número de Resultados</label>
-                            <input type="number" id="collection-results-count" value="4" min="1" max="10" class="w-full p-2 border border-gray-300 rounded-md">
+                            <div>
+                                <label for="photo-style" class="font-semibold block mb-2">2. Estilo Fotográfico</label>
+                                <select id="photo-style" class="input"></select>
+                            </div>
+                            <div>
+                                <label for="model-desc" class="font-semibold block mb-2">3. Descripción del Modelo</label>
+                                <input type="text" id="model-desc" class="input" placeholder="Ej: Mujer joven, pelo castaño...">
+                            </div>
                         </div>
                     </div>
-                </div>
+                    
+                    <!-- Collection Panel -->
+                    <div id="collection-photoshoot-panel" class="hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="font-semibold block mb-2">1. Colección de Prendas (hasta 10)</label>
+                                <div id="uploader-collection" class="upload-box p-4 rounded-lg text-center cursor-pointer">
+                                    <input type="file" id="collection-input" class="hidden" multiple accept="image/*">
+                                    <div class="upload-prompt text-gray-500"><i class="fas fa-images text-3xl mb-2 text-gray-400"></i><p class="font-semibold text-sm">Subir Colección</p></div>
+                                </div>
+                                <div id="collection-previews" class="grid grid-cols-4 gap-2 mt-2"></div>
+                            </div>
+                            <div>
+                                <label for="collection-photo-style" class="font-semibold block mb-2">2. Estilo Fotográfico</label>
+                                <select id="collection-photo-style" class="input"></select>
+                            </div>
+                            <div>
+                                <label for="collection-prompt" class="font-semibold block mb-2">3. Briefing del Photoshoot</label>
+                                <textarea id="collection-prompt" rows="3" class="input" placeholder="Ej: Tres modelos diferentes..."></textarea>
+                            </div>
+                            <div>
+                                <label for="collection-results-count" class="font-semibold block mb-2">4. Número de Resultados</label>
+                                <input type="number" id="collection-results-count" value="4" min="1" max="10" class="input">
+                            </div>
+                        </div>
+                    </div>
 
-                <button id="generate-btn" class="w-full py-3 px-4 text-white font-bold rounded-lg shadow-md btn-primary flex items-center justify-center space-x-2" disabled>
-                    <i class="fas fa-magic"></i>
-                    <span id="generate-btn-text">Generar</span>
-                </button>
-                <p id="progress-text" class="text-center text-sm text-gray-600 h-4"></p>
-            </div>
-        </main>
-
-        <!-- Results Area -->
-        <section class="flex-1 p-6 overflow-y-auto">
-            <h2 class="text-2xl font-bold mb-4">Resultados</h2>
-            <div id="results-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <div id="gallery-placeholder" class="col-span-full flex flex-col items-center justify-center text-center text-gray-400 h-full min-h-[500px]">
-                    <i class="fas fa-palette text-6xl mb-4"></i>
-                    <h3 class="text-lg font-semibold">Tus imágenes aparecerán aquí</h3>
+                    <button id="generate-btn" class="w-full py-3 px-4 btn flex items-center justify-center space-x-2" disabled>
+                        <i class="fas fa-magic"></i><span id="generate-btn-text">Generar</span>
+                    </button>
+                    <div id="usage-counter" class="text-center text-sm text-gris-oscuro h-4 font-semibold"></div>
                 </div>
-                <div id="gallery-loader" class="hidden col-span-full flex flex-col items-center justify-center h-full min-h-[500px]">
-                    <div class="loader"></div>
-                    <h3 class="text-lg font-semibold mt-4 text-gray-600">Creando magia...</h3>
-                </div>
-            </div>
-        </section>
-    </div>
-</div>
+            </main>
 
-<!-- Settings Modal -->
-<div id="settings-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
-    <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform scale-95">
-        <h2 class="text-xl font-bold mb-4">Configuración</h2>
-        <div class="space-y-4">
-            <div>
-                <label for="brand-name-input" class="block text-sm font-medium text-gray-700">Nombre de la Marca</label>
-                <input type="text" id="brand-name-input" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Mi Empresa">
-            </div>
-            <div>
-                <label for="google-api-key-input" class="block text-sm font-medium text-gray-700">Google AI Studio API Key</label>
-                <input type="password" id="google-api-key-input" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Pega tu clave aquí">
-            </div>
-        </div>
-        <div class="mt-6 flex justify-end space-x-3">
-            <button id="settings-cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancelar</button>
-            <button id="settings-save-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Guardar</button>
-        </div>
-    </div>
-</div>
-
-<!-- Presets Modal -->
-<div id="presets-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
-    <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl transform scale-95">
-        <h2 class="text-xl font-bold mb-4">Gestionar Presets de Estilo</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto pr-2">
-            <!-- Presets List -->
-            <div id="presets-list" class="space-y-3"></div>
-            <!-- New Preset Form -->
-            <div class="bg-gray-50 p-4 rounded-lg border">
-                <h3 class="font-bold mb-2">Añadir Nuevo Preset</h3>
-                <div class="space-y-3">
-                    <input type="text" id="new-preset-name" placeholder="Nombre del Preset (ej: Urbano Tokio)" class="w-full p-2 border rounded">
-                    <textarea id="new-preset-prompt" rows="8" placeholder="Instrucciones para la IA (Prompt Maestro)..." class="w-full p-2 border rounded text-sm"></textarea>
-                    <button id="add-preset-btn" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Añadir Preset</button>
+            <!-- Results Area -->
+            <section class="flex-1 p-6 overflow-y-auto">
+                <h2 class="headline text-2xl mb-4">Resultados</h2>
+                <div id="results-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div id="gallery-placeholder" class="col-span-full flex flex-col items-center justify-center text-center text-linea-clara h-full min-h-[500px]">
+                        <i class="fas fa-palette text-6xl mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gris-oscuro">Tus imágenes aparecerán aquí</h3>
+                    </div>
+                    <div id="gallery-loader" class="hidden col-span-full flex flex-col items-center justify-center h-full min-h-[500px]">
+                        <div class="loader"></div>
+                        <h3 class="text-lg font-semibold mt-4 text-gris-oscuro">Creando magia...</h3>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="mt-6 text-right">
-            <button id="presets-close-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cerrar</button>
+            </section>
         </div>
     </div>
-</div>
 
-<!-- Alert Modal -->
-<div id="alert-modal" class="fixed inset-0 modal-overlay z-40 hidden items-center justify-center p-4 opacity-0">
-    <div class="modal-content bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center transform scale-95">
-        <div class="text-yellow-500 text-4xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
-        <h3 id="alert-title" class="text-lg font-bold">Atención</h3>
-        <p id="alert-message" class="text-sm text-gray-600 mt-2"></p>
-        <button id="alert-close-btn" class="mt-6 bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg w-full">Entendido</button>
+    <!-- Modals -->
+    <div id="settings-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
+        <div class="modal-content rounded-lg p-6 w-full max-w-md transform scale-95">
+            <h2 class="headline text-xl mb-4">Configuración</h2>
+            <div class="space-y-4">
+                <div><label for="brand-name-input" class="block text-sm font-semibold">Nombre del Studio</label><input type="text" id="brand-name-input" class="input mt-1" placeholder="Mi Studio"></div>
+                <div><label for="google-api-key-input" class="block text-sm font-semibold">Google Cloud Access Token</label><input type="password" id="google-api-key-input" class="input mt-1" placeholder="Pega tu Access Token aquí"></div>
+                 <div><label for="google-project-id-input" class="block text-sm font-semibold">Google Cloud Project ID</label><input type="text" id="google-project-id-input" class="input mt-1" placeholder="tu-project-id"></div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3"><button id="settings-cancel-btn" class="btn btn-secondary">Cancelar</button><button id="settings-save-btn" class="btn">Guardar</button></div>
+        </div>
     </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    let currentMode = 'single';
-    let uploadedImages = { main: null };
-    let collectionImages = [];
-    let presets = [];
-    const ui = {
-        brandNameHeader: document.getElementById('brand-name-header'),
-        generateBtn: document.getElementById('generate-btn'),
-        progressText: document.getElementById('progress-text'),
-        resultsGallery: document.getElementById('results-gallery'),
-        galleryPlaceholder: document.getElementById('gallery-placeholder'),
-        galleryLoader: document.getElementById('gallery-loader'),
-        modeSingleBtn: document.getElementById('mode-single'),
-        modeCollectionBtn: document.getElementById('mode-collection'),
-        singleProductPanel: document.getElementById('single-product-panel'),
-        collectionPanel: document.getElementById('collection-photoshoot-panel'),
-        collectionUploader: document.getElementById('uploader-collection'),
-        collectionInput: document.getElementById('collection-input'),
-        collectionPreviews: document.getElementById('collection-previews'),
-        styleDropdown: document.getElementById('photo-style'),
-        collectionStyleDropdown: document.getElementById('collection-photo-style'),
-        settingsBtn: document.getElementById('settings-btn'),
-        settingsModal: document.getElementById('settings-modal'),
-        brandNameInput: document.getElementById('brand-name-input'),
-        googleApiKeyInput: document.getElementById('google-api-key-input'),
-        settingsSaveBtn: document.getElementById('settings-save-btn'),
-        settingsCancelBtn: document.getElementById('settings-cancel-btn'),
-        presetsBtn: document.getElementById('presets-btn'),
-        presetsModal: document.getElementById('presets-modal'),
-        presetsList: document.getElementById('presets-list'),
-        newPresetName: document.getElementById('new-preset-name'),
-        newPresetPrompt: document.getElementById('new-preset-prompt'),
-        addPresetBtn: document.getElementById('add-preset-btn'),
-        presetsCloseBtn: document.getElementById('presets-close-btn'),
-        alertModal: document.getElementById('alert-modal'),
-        alertTitle: document.getElementById('alert-title'),
-        alertMessage: document.getElementById('alert-message'),
-        alertCloseBtn: document.getElementById('alert-close-btn'),
-    };
-    const defaultPresets = [
-        { name: "Fitness / Gimnasio", prompt: "Editorial fitness photoshoot inside a modern, gritty gym with high-contrast cinematic lighting. A {model_desc} is performing a dynamic, powerful pose. Shot on a Sony A7R IV, 85mm f/1.4 lens, hyperrealistic, sharp focus, professional color grading. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Traje de Baño / Playa", prompt: "Luxury swimwear campaign photoshoot on a pristine beach at golden hour. A {model_desc} poses elegantly near the turquoise water. Soft, warm light. Shot on a Canon EOS R5, 70-200mm f/2.8 lens, photorealistic, high detail, natural skin texture. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Moda de Invierno", prompt: "High-fashion winter clothing photoshoot in a snowy aspen forest. A {model_desc} is dressed warmly, looking chic. Crisp, cool lighting. Shot on a Fujifilm GFX 100, medium format look, incredibly detailed textures. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Lookbook Urbano", prompt: "Street style lookbook photoshoot in Tokyo. A {model_desc} has a confident, natural pose against an interesting urban background. Shot on a Leica M11, 35mm f/1.4 lens, candid style, cinematic, film grain, hyperrealistic. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Minimalista Escandinavo", prompt: "Scandinavian minimalist lookbook. A {model_desc} in a calm pose within a minimalist studio. Soft, diffused natural light. Shot on a Fujifilm GFX 100S, exquisite detail in fabric textures. Clean, serene. Hyperrealistic. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Lujo / Alta Costura", prompt: "High-fashion editorial. A {model_desc} in an avant-garde pose in a grand architectural space. Dramatic, high-contrast lighting. Shot on a Phase One XF camera, sharp, high-end look. Hyperrealistic. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Bohemio / Estilo de Vida", prompt: "Candid bohemian-chic photoshoot. A {model_desc} is laughing in a sun-drenched field at golden hour. Warm, hazy light, artistic lens flare. Shot on a Canon EOS 5D Mark IV, 50mm f/1.2, dreamy depth of field. Photorealistic. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Corporativo / Negocios", prompt: "Professional corporate lookbook. A {model_desc} with a confident expression in a modern office, blurred city view. Clean, soft lighting. Shot on a Nikon Z8, 24-70mm f/2.8, polished. Hyperrealistic. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Ropa Infantil / Juguetona", prompt: "Vibrant children's clothing catalog. A {model_desc} (described as a child) is captured mid-laugh in a colorful setting. High-key lighting, cheerful. Shot on a Sony A1, 50mm f/1.8 to freeze motion. Hyperrealistic. AVOID: 3d render, cartoon, blurry, deformed." },
-        { name: "Producto en Estudio", prompt: "Professional e-commerce photoshoot of the garment on an invisible mannequin (ghost mannequin effect), in a studio with perfect, even lighting against a solid light gray background (#f2f2f2). Shot on a Phase One camera, macro lens for extreme detail on the fabric. AVOID: 3d render, cartoon, blurry, deformed." },
-    ];
-    const openModal = (modal) => {
-        modal.classList.remove('hidden', 'opacity-0');
-        modal.classList.add('flex');
-        setTimeout(() => modal.querySelector('.modal-content').classList.remove('scale-95'), 10);
-    };
-    const closeModal = (modal) => {
-        modal.querySelector('.modal-content').classList.add('scale-95');
-        modal.classList.add('opacity-0');
-        setTimeout(() => modal.classList.add('hidden'), 300);
-    };
-    const showAlert = (message, title = "Atención") => {
-        ui.alertTitle.textContent = title;
-        ui.alertMessage.textContent = message;
-        openModal(ui.alertModal);
-    };
-    const loadSettings = () => {
-        const brandName = localStorage.getItem('brandName') || 'Studio Pro';
-        const apiKey = localStorage.getItem('googleApiKey') || '';
-        ui.brandNameHeader.textContent = brandName;
-        ui.brandNameInput.value = brandName;
-        ui.googleApiKeyInput.value = apiKey;
-    };
-    const saveSettings = () => {
-        localStorage.setItem('brandName', ui.brandNameInput.value);
-        localStorage.setItem('googleApiKey', ui.googleApiKeyInput.value);
-        loadSettings();
-        closeModal(ui.settingsModal);
-    };
-    const loadPresets = () => {
-        const storedPresets = localStorage.getItem('customPresets');
-        presets = storedPresets ? JSON.parse(storedPresets) : defaultPresets;
-        if (!storedPresets) localStorage.setItem('customPresets', JSON.stringify(presets));
-        populatePresetDropdowns();
-        renderPresetsManager();
-    };
-    const populatePresetDropdowns = () => {
-        [ui.styleDropdown, ui.collectionStyleDropdown].forEach(dropdown => {
-            dropdown.innerHTML = '';
-            presets.forEach((preset, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = preset.name;
-                dropdown.appendChild(option);
-            });
-        });
-    };
-    const renderPresetsManager = () => {
-        ui.presetsList.innerHTML = '';
-        presets.forEach((preset, index) => {
-            const div = document.createElement('div');
-            div.className = 'p-3 border rounded-lg bg-white flex justify-between items-start';
-            div.innerHTML = `<div><p class="font-bold">${preset.name}</p><p class="text-xs text-gray-500 mt-1 truncate">${preset.prompt}</p></div><button data-index="${index}" class="delete-preset-btn text-red-500 hover:text-red-700 ml-2 flex-shrink-0">&times;</button>`;
-            ui.presetsList.appendChild(div);
-        });
-    };
-    const saveNewPreset = () => {
-        const name = ui.newPresetName.value.trim();
-        const prompt = ui.newPresetPrompt.value.trim();
-        if (name && prompt) {
-            presets.push({ name, prompt });
-            localStorage.setItem('customPresets', JSON.stringify(presets));
-            loadPresets();
-            ui.newPresetName.value = '';
-            ui.newPresetPrompt.value = '';
-        }
-    };
-    const deletePreset = (index) => {
-        if (presets.length <= 1) { showAlert("Debes tener al menos un preset."); return; }
-        presets.splice(index, 1);
-        localStorage.setItem('customPresets', JSON.stringify(presets));
-        loadPresets();
-    };
-    ui.settingsBtn.addEventListener('click', () => openModal(ui.settingsModal));
-    ui.settingsCancelBtn.addEventListener('click', () => closeModal(ui.settingsModal));
-    ui.settingsSaveBtn.addEventListener('click', saveSettings);
-    ui.presetsBtn.addEventListener('click', () => openModal(ui.presetsModal));
-    ui.presetsCloseBtn.addEventListener('click', () => closeModal(ui.presetsModal));
-    ui.addPresetBtn.addEventListener('click', saveNewPreset);
-    ui.presetsList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-preset-btn')) {
-            const index = e.target.dataset.index;
-            if (confirm(`¿Estás seguro de que quieres eliminar el preset "${presets[index].name}"?`)) {
-                deletePreset(index);
-            }
-        }
-    });
-    ui.alertCloseBtn.addEventListener('click', () => closeModal(ui.alertModal));
-    
-    function initializeUploader(uploaderId) {
-        const uploaderEl = document.getElementById(uploaderId);
-        const inputEl = uploaderEl.querySelector('.image-input');
-        const promptEl = uploaderEl.querySelector('.upload-prompt');
-        const previewContainerEl = uploaderEl.querySelector('.image-preview-container');
-        const previewEl = uploaderEl.querySelector('.image-preview');
-        const removeBtn = uploaderEl.querySelector('.remove-image-btn');
-        const uploaderKey = inputEl.dataset.uploader;
-        uploaderEl.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('remove-image-btn')) { inputEl.click(); }
-        });
-        inputEl.addEventListener('change', e => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = re => {
-                    uploadedImages[uploaderKey] = re.target.result.split(',')[1];
-                    previewEl.src = re.target.result;
-                    promptEl.classList.add('hidden');
-                    previewContainerEl.classList.remove('hidden');
-                    checkGenerateButtonState();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        removeBtn.addEventListener('click', e => {
-            e.stopPropagation();
-            inputEl.value = '';
-            uploadedImages[uploaderKey] = null;
-            promptEl.classList.remove('hidden');
-            previewContainerEl.classList.add('hidden');
-            checkGenerateButtonState();
-        });
-    }
-    initializeUploader('uploader-main');
+    <div id="presets-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
+        <div class="modal-content rounded-lg p-6 w-full max-w-2xl transform scale-95">
+            <h2 class="headline text-xl mb-4">Gestionar Estilos Fotográficos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto pr-2">
+                <div id="presets-list" class="space-y-3"></div>
+                <div class="bg-gray-50 p-4 rounded-lg border border-linea-clara">
+                    <h3 class="font-bold mb-2">Añadir Nuevo Estilo</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="new-preset-name" placeholder="Nombre del Estilo (ej: Luz Neón)" class="input">
+                        <textarea id="new-preset-prompt" rows="8" placeholder="Instrucciones para la IA (Prompt)..." class="input text-sm"></textarea>
+                        <button id="add-preset-btn" class="btn w-full">Añadir Estilo</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 text-right"><button id="presets-close-btn" class="btn btn-secondary">Cerrar</button></div>
+        </div>
+    </div>
 
-    ui.collectionUploader.addEventListener('click', () => ui.collectionInput.click());
-    ui.collectionInput.addEventListener('change', e => {
-        const files = Array.from(e.target.files);
-        if (collectionImages.length + files.length > 10) { showAlert("Puedes subir un máximo de 10 prendas."); return; }
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = re => {
-                const base64 = re.target.result.split(',')[1];
-                collectionImages.push({ name: file.name, base64 });
-                renderCollectionPreviews();
-                checkGenerateButtonState();
-            };
-            reader.readAsDataURL(file);
-        });
-        ui.collectionInput.value = '';
-    });
-    const renderCollectionPreviews = () => {
-        ui.collectionPreviews.innerHTML = '';
-        collectionImages.forEach((img, index) => {
-            const div = document.createElement('div');
-            div.className = 'relative aspect-square';
-            div.innerHTML = `<img src="data:image/png;base64,${img.base64}" class="w-full h-full object-cover rounded-md"><button data-index="${index}" class="remove-collection-item absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">&times;</button>`;
-            ui.collectionPreviews.appendChild(div);
-        });
-        ui.collectionUploader.querySelector('.upload-prompt').classList.toggle('hidden', collectionImages.length > 0);
-    };
-    ui.collectionPreviews.addEventListener('click', e => {
-        if (e.target.classList.contains('remove-collection-item')) {
-            collectionImages.splice(parseInt(e.target.dataset.index, 10), 1);
-            renderCollectionPreviews();
-            checkGenerateButtonState();
-        }
-    });
+    <div id="alert-modal" class="fixed inset-0 modal-overlay z-40 hidden items-center justify-center p-4 opacity-0">
+        <div class="modal-content rounded-lg p-6 w-full max-w-sm text-center transform scale-95">
+            <div class="text-rojo-acento text-4xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3 id="alert-title" class="headline text-lg">Atención</h3>
+            <p id="alert-message" class="text-sm mt-2"></p>
+            <button id="alert-close-btn" class="mt-6 btn w-full">Entendido</button>
+        </div>
+    </div>
 
-    const switchMode = (mode) => {
-        currentMode = mode;
-        const btnClasses = (isActive) => isActive ? ['bg-white', 'text-indigo-600', 'shadow'] : ['text-gray-600'];
-        ui.modeSingleBtn.classList.remove(...btnClasses(mode !== 'single'));
-        ui.modeSingleBtn.classList.add(...btnClasses(mode === 'single'));
-        ui.modeCollectionBtn.classList.remove(...btnClasses(mode !== 'collection'));
-        ui.modeCollectionBtn.classList.add(...btnClasses(mode === 'collection'));
-        ui.singleProductPanel.classList.toggle('hidden', mode !== 'single');
-        ui.collectionPanel.classList.toggle('hidden', mode !== 'collection');
-        checkGenerateButtonState();
-    };
-    ui.modeSingleBtn.addEventListener('click', () => switchMode('single'));
-    ui.modeCollectionBtn.addEventListener('click', () => switchMode('collection'));
-
-    const checkGenerateButtonState = () => {
-        ui.generateBtn.disabled = (currentMode === 'single') ? !uploadedImages.main : collectionImages.length === 0;
-    };
-
-    ui.generateBtn.addEventListener('click', () => {
-        const apiKey = localStorage.getItem('googleApiKey');
-        if (!apiKey) {
-            showAlert("Por favor, añade tu API Key de Google AI Studio en el panel de Configuración (ícono de engranaje).");
-            return;
-        }
-        ui.resultsGallery.innerHTML = '';
-        ui.galleryPlaceholder.classList.add('hidden');
-        ui.galleryLoader.classList.remove('hidden');
-        setLoadingState(true, 0, 0);
-        if (currentMode === 'single') handleSingleGeneration();
-        else handleCollectionGeneration();
-    });
-    
-    async function handleSingleGeneration() {
-        const prompt = constructPrompt();
-        const images = [uploadedImages.main].filter(Boolean);
-        try {
-            const generatedImage = await callNanoBananaAPI(prompt, images);
-            if (generatedImage) addImageToGallery(generatedImage);
-        } catch (error) { showAlert(error.message, "Error de Generación"); }
-        finally { setLoadingState(false, 1, 1); }
-    }
-    async function handleCollectionGeneration() {
-        const count = parseInt(document.getElementById('collection-results-count').value, 10);
-        for (let i = 0; i < count; i++) {
-            setLoadingState(true, i, count);
-            try {
-                const garmentsForShot = [...collectionImages].sort(() => 0.5 - Math.random()).slice(0, Math.min(Math.floor(Math.random() * 3) + 1, collectionImages.length));
-                const prompt = constructPrompt(garmentsForShot);
-                const images = garmentsForShot.map(g => g.base64);
-                const generatedImage = await callNanoBananaAPI(prompt, images);
-                if (generatedImage) addImageToGallery(generatedImage, i);
-            } catch (error) { showAlert(`Error en la generación ${i + 1}: ${error.message}`, "Error de Generación"); }
-        }
-        setLoadingState(false, count, count);
-    }
-    
-    function constructPrompt(collectionItems = null) {
-        if (currentMode === 'single') {
-            const presetIndex = ui.styleDropdown.value;
-            const selectedPreset = presets[presetIndex];
-            const modelDesc = document.getElementById('model-desc').value || 'professional model';
-            let finalPrompt = selectedPreset.prompt.replace('{model_desc}', modelDesc);
-            if (uploadedImages.main && !selectedPreset.prompt.includes('invisible mannequin')) {
-                finalPrompt += ' The model is wearing the main provided garment.';
-            }
-            return finalPrompt;
-        } else {
-            const presetIndex = ui.collectionStyleDropdown.value;
-            const selectedPreset = presets[presetIndex];
-            const baseDesc = document.getElementById('collection-prompt').value || 'A group of models';
-            let finalPrompt = selectedPreset.prompt.replace('{model_desc}', baseDesc);
-            const garmentNames = collectionItems.map(g => `'${g.name}'`).join(', ');
-            finalPrompt += ` The models are showcasing a collection of garments including: ${garmentsForShot.length} items from this collection. Create a cohesive campaign image.`;
-            return finalPrompt;
-        }
-    }
-    
-    async function callNanoBananaAPI(prompt, base64ImagesArray) {
-        const apiKey = localStorage.getItem('googleApiKey');
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
-        const parts = [{ text: prompt }];
-        base64ImagesArray.forEach(imgData => parts.push({ inlineData: { mimeType: "image/png", data: imgData } }));
-        const payload = { contents: [{ parts }], generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } };
-        const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
-        }
-        const result = await response.json();
-        const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-        if (!base64Data) {
-            if (result.candidates && result.candidates[0] && result.candidates[0].finishReason === 'SAFETY') {
-                throw new Error("Imagen bloqueada por políticas de seguridad de la IA.");
-            }
-            throw new Error("No se recibió una imagen válida de la API.");
-        }
-        return `data:image/png;base64,${base64Data}`;
-    }
-
-    const setLoadingState = (isLoading, current, total) => {
-        ui.generateBtn.disabled = isLoading;
-        ui.galleryLoader.classList.toggle('hidden', !isLoading);
-        ui.generateBtn.querySelector('span').textContent = isLoading ? "Generando..." : "Generar";
-        ui.progressText.textContent = (isLoading && total > 1) ? `Generando ${current + 1} de ${total}...` : '';
-        if (!isLoading && !ui.resultsGallery.hasChildNodes()) {
-            ui.galleryPlaceholder.classList.remove('hidden');
-        }
-    };
-    const addImageToGallery = (imageUrl, delay = 0) => {
-        const card = document.createElement('div');
-        card.className = 'relative aspect-[4/5] rounded-lg shadow-md overflow-hidden fade-in';
-        card.style.animationDelay = `${delay * 100}ms`;
-        card.innerHTML = `<img src="${imageUrl}" alt="Generated image" class="w-full h-full object-cover"><a href="${imageUrl}" download="StudioPro_Result_${Date.now()}.png" class="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition"><i class="fas fa-download"></i></a>`;
-        ui.resultsGallery.prepend(card);
-    };
-
-    function init() {
-        loadSettings();
-        loadPresets();
-        checkGenerateButtonState();
-    }
-    init();
-});
-</script>
+    <script src="main.js"></script>
 </body>
 </html>
-
-
