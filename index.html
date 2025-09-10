@@ -1,4 +1,3 @@
-<!-- index.html (Sin cambios, sigue siendo válido) -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,142 +11,125 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!-- ... (El resto del HTML sigue igual que en la respuesta anterior) ... -->
-    <div class="flex h-screen bg-fondo-crema">
-        <!-- Sidebar -->
-        <aside class="w-16 flex flex-col items-center space-y-6 py-4 bg-white border-r border-linea-clara shadow-sm">
-            <div class="text-rojo-acento">
-                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 7L12 12L22 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <button id="settings-btn" class="p-2 rounded-lg hover:bg-gray-100 text-gris-oscuro" title="Configuración"><i class="fas fa-cog fa-lg"></i></button>
-            <button id="presets-btn" class="p-2 rounded-lg hover:bg-gray-100 text-gris-oscuro" title="Gestionar Presets"><i class="fas fa-palette fa-lg"></i></button>
-        </aside>
+<body class="text-gray-800">
 
-        <!-- Main Content -->
-        <div class="flex-1 flex overflow-hidden">
-            <!-- Control Panel -->
-            <main class="w-full md:w-1/3 lg:w-1/4 xl:w-1/5 p-6 bg-white border-r border-linea-clara overflow-y-auto">
-                <h1 id="brand-name-header" class="headline text-2xl mb-6">Studio Pixel</h1>
+<div class="flex h-screen bg-fondo-crema">
+    <!-- Sidebar -->
+    <aside class="w-16 flex flex-col items-center space-y-6 py-4 bg-white border-r border-linea-clara shadow-sm">
+        <div class="text-rojo-acento">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 7L12 12L22 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <button id="settings-btn" class="p-2 rounded-lg hover:bg-gray-100 text-gris-oscuro" title="Configuración"><i class="fas fa-cog fa-lg"></i></button>
+        <button id="presets-btn" class="p-2 rounded-lg hover:bg-gray-100 text-gris-oscuro" title="Gestionar Presets"><i class="fas fa-palette fa-lg"></i></button>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex overflow-hidden">
+        <!-- Control Panel -->
+        <main class="w-full md:w-1/3 lg:w-1/4 xl:w-1/5 p-6 bg-white border-r border-linea-clara overflow-y-auto">
+            <h1 id="brand-name-header" class="headline text-2xl mb-6">Studio Pixel</h1>
+            
+            <div class="space-y-6">
+                <div class="bg-gray-100 border border-linea-clara rounded-full p-1 flex text-sm">
+                    <button id="mode-single" class="mode-btn w-1/2 p-2 rounded-full font-semibold bg-white text-rojo-acento shadow">Individual</button>
+                    <button id="mode-collection" class="mode-btn w-1/2 p-2 rounded-full font-semibold text-gris-oscuro">Colección</button>
+                </div>
+
+                <div id="single-product-panel">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="font-semibold block mb-2">1. Prenda Principal</label>
+                            <div id="uploader-main" class="upload-box p-4 rounded-lg text-center cursor-pointer">
+                                <input type="file" class="hidden image-input" data-uploader="main" accept="image/*">
+                                <div class="upload-prompt text-gray-500"><i class="fas fa-tshirt text-3xl mb-2 text-gray-400"></i><p class="font-semibold text-sm">Subir Prenda</p></div>
+                                <div class="image-preview-container hidden relative"><img src="#" alt="Prenda" class="image-preview w-full h-auto rounded-md"/><button class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="photo-style" class="font-semibold block mb-2">2. Estilo Fotográfico</label>
+                            <select id="photo-style" class="input"></select>
+                        </div>
+                        <div>
+                            <label for="model-desc" class="font-semibold block mb-2">3. Descripción del Modelo y Escena</label>
+                            <input type="text" id="model-desc" class="input" placeholder="Ej: mujer en una discoteca bailando...">
+                        </div>
+                    </div>
+                </div>
                 
-                <div class="space-y-6">
-                    <div class="bg-gray-100 border border-linea-clara rounded-full p-1 flex text-sm">
-                        <button id="mode-single" class="mode-btn w-1/2 p-2 rounded-full font-semibold bg-white text-rojo-acento shadow">Individual</button>
-                        <button id="mode-collection" class="mode-btn w-1/2 p-2 rounded-full font-semibold text-gris-oscuro">Colección</button>
-                    </div>
-
-                    <!-- Single Product Panel -->
-                    <div id="single-product-panel">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="font-semibold block mb-2">1. Prenda Principal</label>
-                                <div id="uploader-main" class="upload-box p-4 rounded-lg text-center cursor-pointer">
-                                    <input type="file" class="hidden image-input" data-uploader="main" accept="image/*">
-                                    <div class="upload-prompt text-gray-500"><i class="fas fa-tshirt text-3xl mb-2 text-gray-400"></i><p class="font-semibold text-sm">Subir Prenda</p></div>
-                                    <div class="image-preview-container hidden relative"><img src="#" alt="Prenda" class="image-preview w-full h-auto rounded-md"/><button class="remove-image-btn absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button></div>
-                                </div>
+                <div id="collection-photoshoot-panel" class="hidden">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="font-semibold block mb-2">1. Colección de Prendas (hasta 10)</label>
+                            <div id="uploader-collection" class="upload-box p-4 rounded-lg text-center cursor-pointer">
+                                <input type="file" id="collection-input" class="hidden" multiple accept="image/*">
+                                <div class="upload-prompt text-gray-500"><i class="fas fa-images text-3xl mb-2 text-gray-400"></i><p class="font-semibold text-sm">Subir Colección</p></div>
                             </div>
-                            <div>
-                                <label for="photo-style" class="font-semibold block mb-2">2. Estilo Fotográfico</label>
-                                <select id="photo-style" class="input"></select>
-                            </div>
-                            <div>
-                                <label for="model-desc" class="font-semibold block mb-2">3. Descripción del Modelo</label>
-                                <input type="text" id="model-desc" class="input" placeholder="Ej: Mujer joven, pelo castaño...">
-                            </div>
+                            <div id="collection-previews" class="grid grid-cols-4 gap-2 mt-2"></div>
+                        </div>
+                        <div>
+                            <label for="collection-photo-style" class="font-semibold block mb-2">2. Estilo Fotográfico</label>
+                            <select id="collection-photo-style" class="input"></select>
+                        </div>
+                        <div>
+                            <label for="collection-prompt" class="font-semibold block mb-2">3. Briefing del Photoshoot</label>
+                            <textarea id="collection-prompt" rows="3" class="input" placeholder="Ej: Tres modelos diferentes..."></textarea>
+                        </div>
+                        <div>
+                            <label for="collection-results-count" class="font-semibold block mb-2">4. Número de Resultados</label>
+                            <input type="number" id="collection-results-count" value="4" min="1" max="10" class="input">
                         </div>
                     </div>
-                    
-                    <!-- Collection Panel -->
-                    <div id="collection-photoshoot-panel" class="hidden">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="font-semibold block mb-2">1. Colección de Prendas (hasta 10)</label>
-                                <div id="uploader-collection" class="upload-box p-4 rounded-lg text-center cursor-pointer">
-                                    <input type="file" id="collection-input" class="hidden" multiple accept="image/*">
-                                    <div class="upload-prompt text-gray-500"><i class="fas fa-images text-3xl mb-2 text-gray-400"></i><p class="font-semibold text-sm">Subir Colección</p></div>
-                                </div>
-                                <div id="collection-previews" class="grid grid-cols-4 gap-2 mt-2"></div>
-                            </div>
-                            <div>
-                                <label for="collection-photo-style" class="font-semibold block mb-2">2. Estilo Fotográfico</label>
-                                <select id="collection-photo-style" class="input"></select>
-                            </div>
-                            <div>
-                                <label for="collection-prompt" class="font-semibold block mb-2">3. Briefing del Photoshoot</label>
-                                <textarea id="collection-prompt" rows="3" class="input" placeholder="Ej: Tres modelos diferentes..."></textarea>
-                            </div>
-                            <div>
-                                <label for="collection-results-count" class="font-semibold block mb-2">4. Número de Resultados</label>
-                                <input type="number" id="collection-results-count" value="4" min="1" max="10" class="input">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button id="generate-btn" class="w-full py-3 px-4 btn flex items-center justify-center space-x-2" disabled>
-                        <i class="fas fa-magic"></i><span id="generate-btn-text">Generar</span>
-                    </button>
-                    <div id="usage-counter" class="text-center text-sm text-gris-oscuro h-4 font-semibold"></div>
                 </div>
-            </main>
-
-            <!-- Results Area -->
-            <section class="flex-1 p-6 overflow-y-auto">
-                <h2 class="headline text-2xl mb-4">Resultados</h2>
-                <div id="results-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <div id="gallery-placeholder" class="col-span-full flex flex-col items-center justify-center text-center text-linea-clara h-full min-h-[500px]">
-                        <i class="fas fa-palette text-6xl mb-4"></i>
-                        <h3 class="text-lg font-semibold text-gris-oscuro">Tus imágenes aparecerán aquí</h3>
-                    </div>
-                    <div id="gallery-loader" class="hidden col-span-full flex flex-col items-center justify-center h-full min-h-[500px]">
-                        <div class="loader"></div>
-                        <h3 class="text-lg font-semibold mt-4 text-gris-oscuro">Creando magia...</h3>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <div id="settings-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
-        <div class="modal-content rounded-lg p-6 w-full max-w-md transform scale-95">
-            <h2 class="headline text-xl mb-4">Configuración</h2>
-            <div class="space-y-4">
-                <div><label for="brand-name-input" class="block text-sm font-semibold">Nombre del Studio</label><input type="text" id="brand-name-input" class="input mt-1" placeholder="Mi Studio"></div>
-                <div><label for="google-api-key-input" class="block text-sm font-semibold">Google Cloud Access Token</label><input type="password" id="google-api-key-input" class="input mt-1" placeholder="Pega tu Access Token aquí"></div>
-                 <div><label for="google-project-id-input" class="block text-sm font-semibold">Google Cloud Project ID</label><input type="text" id="google-project-id-input" class="input mt-1" placeholder="tu-project-id"></div>
+                <button id="generate-btn" class="w-full py-3 px-4 btn flex items-center justify-center space-x-2" disabled><i class="fas fa-magic"></i><span id="generate-btn-text">Generar</span></button>
             </div>
-            <div class="mt-6 flex justify-end space-x-3"><button id="settings-cancel-btn" class="btn btn-secondary">Cancelar</button><button id="settings-save-btn" class="btn">Guardar</button></div>
-        </div>
+        </main>
+        <section class="flex-1 p-6 overflow-y-auto">
+            <h2 class="headline text-2xl mb-4">Resultados</h2>
+            <div id="results-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div id="gallery-placeholder" class="col-span-full flex flex-col items-center justify-center text-center text-linea-clara h-full min-h-[500px]"><i class="fas fa-palette text-6xl mb-4"></i><h3 class="text-lg font-semibold text-gris-oscuro">Tus imágenes aparecerán aquí</h3></div>
+                <div id="gallery-loader" class="hidden col-span-full flex flex-col items-center justify-center h-full min-h-[500px]"><div class="loader"></div><h3 class="text-lg font-semibold mt-4 text-gris-oscuro">Creando magia...</h3></div>
+            </div>
+        </section>
     </div>
+</div>
 
-    <div id="presets-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
-        <div class="modal-content rounded-lg p-6 w-full max-w-2xl transform scale-95">
-            <h2 class="headline text-xl mb-4">Gestionar Estilos Fotográficos</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto pr-2">
-                <div id="presets-list" class="space-y-3"></div>
-                <div class="bg-gray-50 p-4 rounded-lg border border-linea-clara">
-                    <h3 class="font-bold mb-2">Añadir Nuevo Estilo</h3>
-                    <div class="space-y-3">
-                        <input type="text" id="new-preset-name" placeholder="Nombre del Estilo (ej: Luz Neón)" class="input">
-                        <textarea id="new-preset-prompt" rows="8" placeholder="Instrucciones para la IA (Prompt)..." class="input text-sm"></textarea>
-                        <button id="add-preset-btn" class="btn w-full">Añadir Estilo</button>
-                    </div>
+<!-- Modals -->
+<div id="settings-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
+    <div class="modal-content rounded-lg p-6 w-full max-w-md transform scale-95">
+        <h2 class="headline text-xl mb-4">Configuración</h2>
+        <div class="space-y-4">
+            <div><label for="brand-name-input" class="block text-sm font-semibold">Nombre del Studio</label><input type="text" id="brand-name-input" class="input mt-1" placeholder="Mi Studio"></div>
+            <div><label for="google-api-key-input" class="block text-sm font-semibold">Google AI Studio API Key</label><input type="password" id="google-api-key-input" class="input mt-1" placeholder="Pega tu clave aquí"></div>
+        </div>
+        <div class="mt-6 flex justify-end space-x-3"><button id="settings-cancel-btn" class="btn btn-secondary">Cancelar</button><button id="settings-save-btn" class="btn">Guardar</button></div>
+    </div>
+</div>
+<div id="presets-modal" class="fixed inset-0 modal-overlay z-30 hidden items-center justify-center p-4 opacity-0">
+    <div class="modal-content rounded-lg p-6 w-full max-w-3xl transform scale-95">
+        <h2 class="headline text-xl mb-4">Gestionar Estilos Fotográficos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto pr-2">
+            <div id="presets-list" class="space-y-3"></div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-linea-clara">
+                <h3 class="font-bold mb-2">Añadir Nuevo Estilo</h3>
+                <div class="space-y-3">
+                    <input type="text" id="new-preset-name" placeholder="Nombre del Estilo" class="input">
+                    <textarea id="new-preset-prompt" rows="8" placeholder="Instrucciones para la IA (Prompt)..." class="input text-sm"></textarea>
+                    <button id="add-preset-btn" class="btn w-full">Añadir Estilo</button>
                 </div>
             </div>
-            <div class="mt-6 text-right"><button id="presets-close-btn" class="btn btn-secondary">Cerrar</button></div>
         </div>
+        <div class="mt-6 text-right"><button id="presets-close-btn" class="btn btn-secondary">Cerrar</button></div>
     </div>
-
-    <div id="alert-modal" class="fixed inset-0 modal-overlay z-40 hidden items-center justify-center p-4 opacity-0">
-        <div class="modal-content rounded-lg p-6 w-full max-w-sm text-center transform scale-95">
-            <div class="text-rojo-acento text-4xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
-            <h3 id="alert-title" class="headline text-lg">Atención</h3>
-            <p id="alert-message" class="text-sm mt-2"></p>
-            <button id="alert-close-btn" class="mt-6 btn w-full">Entendido</button>
-        </div>
+</div>
+<div id="alert-modal" class="fixed inset-0 modal-overlay z-40 hidden items-center justify-center p-4 opacity-0">
+    <div class="modal-content rounded-lg p-6 w-full max-w-sm text-center transform scale-95">
+        <div class="text-rojo-acento text-4xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3 id="alert-title" class="headline text-lg">Atención</h3>
+        <p id="alert-message" class="text-sm mt-2"></p>
+        <button id="alert-close-btn" class="mt-6 btn w-full">Entendido</button>
     </div>
+</div>
 
-    <script src="main.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
